@@ -1,12 +1,8 @@
-import styled from 'styled-components';
 import LogoFontStyle from '../components/FontStyle';
+import styled from 'styled-components';
 
 function Login() {
-  return (
-    <div>
-      <LogoFontStyle>Voir le chemin</LogoFontStyle>
-    </div>
-  );
+  return <LogoFontStyle>Voir le chemin</LogoFontStyle>;
 }
 
 export default Login;
