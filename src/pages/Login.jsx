@@ -9,6 +9,8 @@ import KoreaHomeImg from '../image/KoreaHomeImg.jpg';
 import SeoulHomeImg from '../image/SeoulHomeImg.jpg';
 import SwitzerlandHomeImg from '../image/SwitzerlandHomeImg.jpg';
 import UsaHomeImg from '../image/UsaHomeImg.jpg';
+import PalmtreeImg from '../image/LoginPalmtreeImg.png';
+import whaleImg from '../image/LoginWhaleImg.png';
 
 const LoginCard = styled.div`
   display: flex;
@@ -39,6 +41,7 @@ const LoginPasswoard = styled.form`
     border-color: white;
     padding: 7px;
     box-sizing: border-box;
+    text-align: center;
   }
 `;
 
@@ -64,22 +67,22 @@ const LoginButton = styled.button`
   height: 50px;
   width: 250px;
   margin: 20px;
+  background-color: #87ceeb;
+  border-color: #fff1dc;
+  border-radius: 5px;
+  border: 0px 2px 2px 0px solid #fff1dc;
+`;
+// f7dcb4
+const SingupButton = styled.button`
+  display: block;
+  height: 50px;
+  width: 250px;
   background-color: #f7dcb4;
   border-color: #fff1dc;
   border-radius: 5px;
   border: 0px 2px 2px 0px solid #fff1dc;
 `;
-
-const SingupButton = styled.button`
-  display: block;
-  height: 50px;
-  width: 250px;
-  background-color: #f5e6cc;
-  border-color: #fff1dc;
-  border-radius: 5px;
-  border: 0px 2px 2px 0px solid #fff1dc;
-`;
-
+// f7dcb4
 const HomeImgWrap = styled.div`
   position: absolute;
   left: 1035px;
@@ -95,6 +98,19 @@ const HomeImgWrap = styled.div`
     width: 350px;
     background-size: cover;
   }
+`;
+
+const LoginTreeImg = styled.img`
+  position: absolute;
+  height: 100px;
+  top: 80px;
+  left: 930px;
+`;
+const LoginWhaleImg = styled.img`
+  position: absolute;
+  height: 100px;
+  top: 10px;
+  left: 930px;
 `;
 
 function Login() {
@@ -113,7 +129,7 @@ function Login() {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % HomeImage.length);
-    }, 2500);
+    }, 3500);
     return () => clearInterval(timer);
   }, [HomeImage.length]);
 
@@ -128,6 +144,8 @@ function Login() {
 
   return (
     <>
+      <LoginTreeImg src={PalmtreeImg} />
+      <LoginWhaleImg src={whaleImg} />
       <LoginCard>
         <LogoFontStyle>
           <h1 style={{ height: '520px', fontSize: '30px', fontSize: '45px' }}>Voir le chemin</h1>
