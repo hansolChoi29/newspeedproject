@@ -2,7 +2,7 @@ import LogoFontStyle from '../components/FontStyle';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import PalmtreeImg from '../image/LoginPalmtreeImg.png';
+import PalmtreeImg from './image/LoginPalmtreeImg.png';
 import whaleImg from '../image/LoginWhaleImg.png';
 import StyledButton from '../styles/StyledButton';
 
