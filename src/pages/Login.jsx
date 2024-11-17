@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import PalmtreeImg from '../image/LoginPalmtreeImg.png';
 import whaleImg from '../image/LoginWhaleImg.png';
+import StyledButton from '../styles/StyledButton';
 
 // import { supabase } from '../supabase/supabase';
 // import 민정님꺼 회원가입 받아오기
@@ -73,9 +74,9 @@ function Login() {
             // value={password}
           ></input>
           <P>패스워드를 잊으셨나요?</P>
-          <LoginButton type="button" onClick={loginUser}>
+          <StyledButton type="button" onClick={loginUser}>
             로그인
-          </LoginButton>
+          </StyledButton>
           <SingupButton type="button" onClick={handleSingup}>
             회원가입
           </SingupButton>
@@ -133,12 +134,12 @@ const P = styled.p`
   cursor: pointer;
 `;
 
-const LoginButton = styled.button`
-  display: block;
-  height: 50px;
-  width: 250px;
-  margin: 20px;
-`;
+// const LoginButton = styled.button`
+//   display: block;
+//   height: 50px;
+//   width: 250px;
+//   margin: 20px;
+// `;
 // f7dcb4
 const SingupButton = styled.button`
   display: block;
