@@ -9,7 +9,7 @@
 // // import { supabase } from '../supabase/supabase';
 // // import 민정님꺼 회원가입 받아오기
 
-// function Login() {
+function Login() {
 //   // 로그인에 사용될 데이터 저장 상태
 //   const [email, setEmail] = useState('');
 //   const [password, setPassword] = useState('');
@@ -84,7 +84,7 @@
 //       </LoginCard>
 //     </>
 //   );
-// }
+}
 
 // const LoginCard = styled.div`
 //   display: flex;
@@ -160,4 +160,4 @@
 //   top: 10px;
 //   left: 930px;
 // `;
-// export default Login;
+export default Login;
