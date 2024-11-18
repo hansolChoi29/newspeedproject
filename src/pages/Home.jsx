@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { MdEdit } from 'react-icons/md';
 import imgLogo from '/src/assets/profile.png';
 import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 const PostItem = styled.div``;
 const PostItemTitle = styled.div`
