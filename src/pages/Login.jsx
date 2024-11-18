@@ -71,13 +71,14 @@ const BackgroundColor = styled.div`
 
 function Login() {
   // 로그인에 사용될 데이터 저장 상태
-  const [userEmail, setUserEmail] = useState('');
-  const [userPassword, setUserPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
 
   const loginUser = async () => {
-    const { data, error } = await supabase.auth.signInWithPassword({ userEmail, userPassword });
-
+    console.log(email, password);
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    console.log(data);
     if (data?.user) {
       setUser(data.user);
       handleGoHome();
@@ -115,15 +116,26 @@ function Login() {
 
             <LoginPasswoard>
               <Label>이메일</Label>
-              <input type="email" placeholder="이메일을 입력해주세요." required></input>
+              <input
+                type="email"
+                placeholder="이메일을 입력해주세요."
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                }}
+                required
+              ></input>
               <Label>패스워드</Label>
               <input
                 type="password"
                 placeholder="패스워드를 입력해주세요."
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                }}
                 required
-                // value={password}
               ></input>
-              <P>패스워드를 잊으셨나요?</P>
+              {/* <P>패스워드를 잊으셨나요?</P> */}
               <StyledButton
                 style={{ margin: '20px', width: '300px', height: '70px', marginBottom: '-10px' }}
                 type="button"
