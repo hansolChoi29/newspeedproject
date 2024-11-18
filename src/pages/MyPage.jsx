@@ -209,7 +209,7 @@ const MyPage = () => {
         </StyledText>
         {posts.slice(0, 3).map((post) => (
           <Post key={post.id}>
-            <PostAuthor> {nickname}</PostAuthor>
+            <PostAuthor>{nickname}</PostAuthor>
             <div>{post.post_contents}</div>
           </Post>
         ))}
