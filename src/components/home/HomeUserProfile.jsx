@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { IoMdMore } from 'react-icons/io';
 import imgLogo from '/src/assets/profile.png';
-import { HomeContext } from '../context/HomeProvider';
+import { HomeContext } from '../../context/HomeProvider';
 
 const ProfileWrapper = styled.div`
   display: flex;
@@ -62,6 +62,10 @@ const ToggleButtonList = styled.div`
 export default function HomeUserProfile() {
   const [isVisible, setIsVisible] = useState(false);
   const { handleToggle } = useContext(HomeContext);
+  const handleClickDelete = () => { 
+    
+  }
+
   return (
     <ProfileWrapper>
       <ProfileImg>
@@ -77,7 +81,7 @@ export default function HomeUserProfile() {
         {isVisible && (
           <ToggleButtonList>
             <Link to="/home/:id">수정</Link>
-            <button type="button">삭제</button>
+            <button type="button" onClick={handleClickDelete}>삭제</button>
           </ToggleButtonList>
         )}
       </ProfileToggle>

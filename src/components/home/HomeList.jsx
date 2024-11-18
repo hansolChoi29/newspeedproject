@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { HomeContext } from '../context/HomeProvider';
+import { HomeContext } from '../../context/HomeProvider';
 import HomeListItem from './HomeListItem';
 import HomeCommentList from './HomeCommentList';
 

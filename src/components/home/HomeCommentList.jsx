@@ -1,10 +1,10 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { IoIosClose } from 'react-icons/io';
-import StyledSection from '../styles/StyledSection';
+import StyledSection from '../../styles/StyledSection';
 import HomeCommentForm from './HomeCommentForm';
 import HomeComment from './HomeComment';
-import { HomeContext } from '../context/HomeProvider';
+import { HomeContext } from '../../context/HomeProvider';
 
 const CommentBg = styled.div`
   position: fixed;

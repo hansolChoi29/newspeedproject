@@ -3,8 +3,11 @@ import styled from 'styled-components';
 import { IoChatbubbleOutline } from 'react-icons/io5';
 import { AiOutlineLike, AiFillLike } from 'react-icons/ai';
 import HomeUserProfile from './HomeUserProfile';
-import { HomeContext } from '../context/HomeProvider';
+import { HomeContext } from '../../context/HomeProvider';
 
+const StyledHomeListItem = styled.div`
+
+`;
 const ImgBox = styled.div`
   display: flex;
   gap: 15px;
@@ -46,7 +49,7 @@ export default function HomeListItem() {
   const [toggleLike, setToggleLike] = useState(false);
 
   return (
-    <>
+    <StyledHomeListItem>
       <HomeUserProfile />
       <ImgBox>
         <div style={{ width: '100px', height: '100px', background: 'gray' }} />
@@ -67,6 +70,6 @@ export default function HomeListItem() {
           <strong>0</strong>
         </button>
       </BtnBox>
-    </>
+    </StyledHomeListItem>
   );
 }
