@@ -7,6 +7,8 @@ import whaleImg from '../image/LoginWhaleImg.png';
 import StyledButton from '../styles/StyledButton';
 import StyledSection from '../styles/StyledSection';
 import { supabase } from '../supabase/supabase';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const LoginCard = styled.div`
   display: flex;
@@ -83,7 +85,7 @@ function Login() {
       setUser(data.user);
       handleGoHome();
     } else {
-      alert('이메일 또는 패스워드가 일치하지 않습니다.');
+      toast('이메일 또는 패스워드가 일치하지 않습니다.');
     }
   };
 
@@ -103,6 +105,7 @@ function Login() {
 
   return (
     <>
+      <ToastContainer />
       <BackgroundColor style={{ height: '100vh' }}>
         <LoginTreeImg src={PalmtreeImg} />
 
