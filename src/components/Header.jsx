@@ -15,6 +15,10 @@ function Header() {
     profileImage: ''
   });
 
+  const { data } = supabase.storage
+      .from('avatars')
+      .getPublicUrl('profile.png');
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -56,7 +60,7 @@ function Header() {
       <p>{userProfile.nickname}님 안녕하세요</p>
       <Link to="/Mypage">
         <p>
-          <img src={userProfile.profileImage} alt="프로필사진" />
+          <img src={userProfile.user_profile_image} alt="프로필사진" />
         </p>
       </Link>
     </HeaderStyle>

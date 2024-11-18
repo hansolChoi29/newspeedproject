@@ -24,19 +24,23 @@ const PostItemImg = styled.div`
 
 function Home() {
   return (
-    <Header>
-      <PostItem>
-        <PostItemTitle>
-          홍길동 1시간전{' '}
-          <Link to="/home/:id">
-            <MdEdit />
-          </Link>
-        </PostItemTitle>
-        <PostItemImg>
-          <img src={imgLogo} />
-        </PostItemImg>
-      </PostItem>
-    </Header>
+    <>
+      <Header>
+        <Footer>
+          <PostItem>
+            <PostItemTitle>
+              홍길동 1시간전{' '}
+              <Link to="/home/:id">
+                <MdEdit />
+              </Link>
+            </PostItemTitle>
+            <PostItemImg>
+              <img src={imgLogo} />
+            </PostItemImg>
+          </PostItem>
+        </Footer>
+      </Header>
+    </>
   );
 }
 
