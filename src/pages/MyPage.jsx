@@ -109,7 +109,11 @@ const PostAuthor = styled.div`
 const History = styled.img`
   width: 30px;
 `;
-
+const StyledText = styled.div`
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 10px;
+`;
 const MyPage = () => {
   const [profileImage, setProfileImage] = useState(myprofile);
   const [nickname, setNickname] = useState(''); // 닉네임
@@ -166,7 +170,8 @@ const MyPage = () => {
   return (
     <Container>
       <Section>
-        <ProfileImage src={profileImage || profileupdate} alt="Profile" />
+        <ProfileImage src={profileImage} alt="Profile" />
+        <FileInputLabel src={profileupdate} alt="profileupdate" />
         <FileInput
           id="file-upload"
           type="file"
@@ -199,15 +204,15 @@ const MyPage = () => {
       </LikesSection>
 
       <PostList>
-        <History src={history} alt="history" /> 내가 쓴 게시글
-        <p>
-          {posts.slice(0, 3).map((post) => (
-            <Post key={post.id}>
-              <PostAuthor> {nickname}</PostAuthor>
-              <div>{post.post_contents}</div>
-            </Post>
-          ))}
-        </p>
+        <StyledText>
+          <History src={history} alt="history" /> 내가 쓴 게시글
+        </StyledText>
+        {posts.slice(0, 3).map((post) => (
+          <Post key={post.id}>
+            <PostAuthor> {nickname}</PostAuthor>
+            <div>{post.post_contents}</div>
+          </Post>
+        ))}
       </PostList>
     </Container>
   );
