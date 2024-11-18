@@ -1,12 +1,16 @@
 import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
+import { format, register } from 'timeago.js';
+import koLocale from 'timeago.js/lib/lang/ko';
 import { IoChatbubbleOutline } from 'react-icons/io5';
 import { AiOutlineLike, AiFillLike } from 'react-icons/ai';
 import HomeUserProfile from './HomeUserProfile';
 import { HomeContext } from '../../context/HomeProvider';
 
-const StyledHomeListItem = styled.div`
+register('ko', koLocale);
 
+const StyledHomeListItem = styled.div`
+  margin-bottom: 50px;
 `;
 const ImgBox = styled.div`
   display: flex;
@@ -44,22 +48,25 @@ const BtnBox = styled.div`
   }
 `;
 
-export default function HomeListItem() {
+export default function HomeListItem({ post }) {
   const { chat: toggleChat, setChat: setToggleChat, handleToggle } = useContext(HomeContext);
   const [toggleLike, setToggleLike] = useState(false);
+  const {
+    id,
+    post_contents,
+    post_created_at,
+    post_imgs,
+    user_id,
+    users: { user_nick_name }
+  } = post;
+  console.log(post);
+  const formattedTime = format(new Date(post_created_at), 'ko');
 
   return (
     <StyledHomeListItem>
-      <HomeUserProfile />
-      <ImgBox>
-        <div style={{ width: '100px', height: '100px', background: 'gray' }} />
-        <div style={{ width: '100px', height: '100px', background: 'gray' }} />
-        <div style={{ width: '100px', height: '100px', background: 'gray' }} />
-      </ImgBox>
-      <TextContent>
-        나 여기 가봤는데 너무 호화스럽고 좋더라구 사장님도 너무 친절했고 시설도 너무 깨끗했어! 가격에 비해 이정도면 정말
-        괜찮은 것 같아 주변에 예쁜 바다가 보이는 게 딱 취저야.
-      </TextContent>
+      <HomeUserProfile time={formattedTime} userNickName={user_nick_name} userId={user_id} />
+      <ImgBox>{post_imgs ?? post_imgs.map((imgs) => <img src={imgs} />)}</ImgBox>
+      <TextContent>{post_contents}</TextContent>
       <BtnBox>
         <button type="button" onClick={handleToggle(setToggleChat, toggleChat)}>
           <IoChatbubbleOutline />

@@ -59,12 +59,10 @@ const ToggleButtonList = styled.div`
     }
   }
 `;
-export default function HomeUserProfile() {
+export default function HomeUserProfile({ time, userNickName, userId }) {
   const [isVisible, setIsVisible] = useState(false);
   const { handleToggle } = useContext(HomeContext);
-  const handleClickDelete = () => { 
-    
-  }
+  const handleClickDelete = () => {};
 
   return (
     <ProfileWrapper>
@@ -72,7 +70,7 @@ export default function HomeUserProfile() {
         <img src={imgLogo} />
       </ProfileImg>
       <ProfileName>
-        홍길동 <span>1시간전</span>
+        {userNickName} <span>{time}</span>
       </ProfileName>
       <ProfileToggle>
         <button type="button" onClick={handleToggle(setIsVisible, isVisible)}>
@@ -80,8 +78,12 @@ export default function HomeUserProfile() {
         </button>
         {isVisible && (
           <ToggleButtonList>
-            <Link to="/home/:id">수정</Link>
-            <button type="button" onClick={handleClickDelete}>삭제</button>
+            <Link to="/home/edit" state={{ userId }}>
+              수정
+            </Link>
+            <button type="button" onClick={handleClickDelete}>
+              삭제
+            </button>
           </ToggleButtonList>
         )}
       </ProfileToggle>

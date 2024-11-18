@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import HomeProvider from '../context/HomeProvider';
 import StyledSection from '../styles/StyledSection';
 import HomeList from '../components/home/HomeList';
-import { supabase } from '../supabase/supabase';
 
 const StyledHomeCont = styled.div`
   button {
@@ -16,16 +15,6 @@ const StyledHomeCont = styled.div`
 `;
 
 function Home() {
-  async function fetchData() {
-    const { data, error } = await supabase.from('posts').select('*');
-    if (error) {
-      console.error('Error fetching data:', error);
-    } else {
-      console.log('Data:', data);
-    }
-  }
-
-  fetchData();
   return (
     <HomeProvider>
       <StyledHomeCont>

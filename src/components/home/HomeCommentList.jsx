@@ -37,7 +37,7 @@ const CommentCont = styled.div`
 `;
 
 export default function HomeCommentList() {
-  const { chat, setChat, handleToggle } = useContext(HomeContext);
+  const { chat, setChat, handleToggle, data } = useContext(HomeContext);
 
   return (
     <CommentBg>
@@ -47,7 +47,6 @@ export default function HomeCommentList() {
         </CloseBtn>
         <HomeCommentForm />
         <CommentCont>
-          <HomeComment />
           <HomeComment />
         </CommentCont>
       </StyledSection>
