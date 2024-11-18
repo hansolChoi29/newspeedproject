@@ -1,10 +1,10 @@
 import { useState, useRef } from 'react';
 import styled from 'styled-components';
 import myprofile from '../assets/myprofile.png';
-import profileupdate from './assets/profileupdate.png';
-import Pencil from './assets/Pencil.png';
-import hart from './assets/hart.png';
-import history from './assets/history.png';
+import profileupdate from '../assets/profileupdate.png';
+import Pencil from '../assets/Pencil.png';
+import hart from '../assets/hart.png';
+import history from '../assets/history.png';
 // users에서 user_nick_name
 // posts에서 id, post_contents
 //likes에서 likes_count
