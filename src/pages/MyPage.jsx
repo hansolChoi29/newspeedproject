@@ -6,7 +6,7 @@ import Pencil from '../assets/Pencil.png';
 import hart from '../assets/hart.png';
 import { supabase } from '../supabase/supabase';
 import history from '../assets/history.png';
-// 스타일 정의
+
 const Container = styled.form`
   width: 800px;
   height: 800px;
@@ -69,7 +69,6 @@ const PencilIcon = styled.img`
   cursor: pointer;
 `;
 
-//구분선
 const Divider = styled.hr`
   width: 800px;
   margin: 30px 0;
@@ -77,7 +76,6 @@ const Divider = styled.hr`
   border-top: 1px solid #ccc;
 `;
 
-//hart
 const LikesSection = styled.div`
   display: flex;
   align-items: flex-start;
@@ -111,7 +109,7 @@ const PostAuthor = styled.div`
 const History = styled.img`
   width: 30px;
 `;
-// MyPage 컴포넌트
+
 const MyPage = () => {
   const [profileImage, setProfileImage] = useState(myprofile);
   const [nickname, setNickname] = useState(''); // 닉네임
