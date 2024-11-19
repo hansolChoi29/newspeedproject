@@ -44,7 +44,7 @@ const FileInputLabel = styled.img`
   height: 30px;
   background-image: url(${profileupdate});
   position: absolute;
-  right: 390px;
+  left: 990px;
   bottom: 610px;
   background-size: cover;
   background-position: center;
@@ -128,7 +128,7 @@ const StyledText = styled.div`
   margin-right: auto;
   font-weight: bold;
   position: absolute;
-  right: 590px;
+  left: 680px;
   top: 380px;
 `;
 
