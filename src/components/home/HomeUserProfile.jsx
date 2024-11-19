@@ -1,4 +1,5 @@
 import React, { useContext, useState } from 'react';
+import { supabase } from '../../supabase/supabase';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { format, register } from 'timeago.js';
@@ -62,27 +63,43 @@ const ToggleButtonList = styled.div`
     }
   }
 `;
-export default function HomeUserProfile({ time, userNickName, userId, userProfile }) {
+export default function HomeUserProfile({ time, userNickName, userId, targetId }) {
   const [isVisible, setIsVisible] = useState(false);
-  const { handleToggle } = useContext(HomeContext);
+  const { data, setData } = useContext(HomeContext);
   const formattedTime = format(new Date(time), 'ko');
-  const handleClickDelete = () => { };
+  const user = data.find((userData) => userData.users.id === userId);
+  const profileImage = user?.users.user_profile_image || null;
+
+  const { data: publicUrlData } = supabase.storage.from('avatars').getPublicUrl('profile.png');
+  const profileImageUrl = profileImage ? profileImage : publicUrlData?.publicUrl || '';
+
+  const deletePost = async (postId) => {
+    const { error } = await supabase.from('posts').delete().eq('id', postId);
+    if (error) {
+      console.error(error);
+    } else {
+      setData((prevData) => prevData.filter((post) => post.id !== postId));
+    }
+  };
+  const handleClickDelete = () => {
+    deletePost(targetId);
+  };
 
   return (
     <ProfileWrapper>
       <ProfileImg>
-        <img src={userProfile} />
+        <img src={profileImageUrl} />
       </ProfileImg>
       <ProfileName>
         {userNickName} <span>{formattedTime}</span>
       </ProfileName>
       <ProfileToggle>
-        <button type="button" onClick={handleToggle(setIsVisible, isVisible)}>
+        <button type="button" onClick={() => setIsVisible(!isVisible)}>
           <IoMdMore />
         </button>
         {isVisible && (
           <ToggleButtonList>
-            <Link to="/home/edit" state={{ userId }}>
+            <Link to={`/post/${targetId}`} state={{ targetId }}>
               수정
             </Link>
             <button type="button" onClick={handleClickDelete}>

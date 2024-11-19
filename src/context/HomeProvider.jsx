@@ -8,6 +8,7 @@ export default function HomeProvider({ children }) {
   const [chat, setChat] = useState([]);
   const [chatToggle, setChatToggle] = useState(false);
   const [postId, setPostId] = useState('');
+  const [comments, setComments] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,10 +27,25 @@ export default function HomeProvider({ children }) {
     fetchData();
   }, []);
 
-  const handleToggle = (setter, value) => () => setter(!value);
-
   return (
+<<<<<<< HEAD
     <HomeContext.Provider value={{ handleToggle, chatToggle, setChatToggle, data, postId, setPostId, chat, setChat, setData }}>
+=======
+    <HomeContext.Provider
+      value={{
+        chatToggle,
+        setChatToggle,
+        data,
+        setData,
+        postId,
+        setPostId,
+        chat,
+        setChat,
+        comments,
+        setComments
+      }}
+    >
+>>>>>>> f84dce5208d2031d5f43efe01ea97a622497d73d
       {children}
     </HomeContext.Provider>
   );

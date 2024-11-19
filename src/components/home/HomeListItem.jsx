@@ -1,10 +1,10 @@
-import React, { useContext, useState } from 'react';
+import { supabase } from '../../supabase/supabase';
+import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { IoChatbubbleOutline } from 'react-icons/io5';
 import { AiOutlineLike, AiFillLike } from 'react-icons/ai';
 import HomeUserProfile from './HomeUserProfile';
 import { HomeContext } from '../../context/HomeProvider';
-import HomeCommentList from './HomeCommentList';
 
 const StyledHomeListItem = styled.div`
   margin-bottom: 50px;
@@ -50,30 +50,66 @@ const BtnBox = styled.div`
 
 export default function HomeListItem({ post }) {
   const { setChat, setPostId, chatToggle, setChatToggle } = useContext(HomeContext);
-  const [toggleLike, setToggleLike] = useState(false);
   const {
     id,
     post_contents,
     post_created_at,
     post_imgs,
     user_id,
-    users: { user_nick_name, user_profile_image }
+    comments,
+    users: { user_nick_name },
+    likes
   } = post;
+  const [toggleLike, setToggleLike] = useState(false);
+  const [likesCount, setLikesCount] = useState(likes.length);
+
+  const commentCount = post.comments ? post.comments.length : 0;
+
+  useEffect(() => {
+    const currentUserLike = likes.find((like) => like.user_id === user_id && like.post_id === id);
+    if (currentUserLike) {
+      setToggleLike(true);
+    }
+  }, [likes, user_id, id]);
+
   const handleClickToggleComment = () => {
     setPostId(id);
     setChatToggle(!chatToggle);
-    setChat(post.comments);
+    setChat(comments);
   };
-  const commentCount = post.comments ? post.comments.length : 0;
+
+  const handleLikeClick = async () => {
+    setToggleLike(!toggleLike);
+    setLikesCount((prevCount) => (toggleLike ? prevCount - 1 : prevCount + 1));
+
+    try {
+      const currentLike = likes.find((like) => like.post_id === id && like.user_id === user_id);
+
+      if (toggleLike && currentLike) {
+        const { error } = await supabase.from('likes').delete().eq('post_id', id).eq('user_id', user_id);
+        if (error) {
+          console.error(error);
+        }
+      } else {
+        const { error } = await supabase.from('likes').insert([
+          {
+            post_id: id,
+            user_id,
+            likes_count: 1
+          }
+        ]);
+        if (error) {
+          console.error(error);
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <StyledHomeListItem>
-      <HomeUserProfile
-        time={post_created_at}
-        userNickName={user_nick_name}
-        userProfile={user_profile_image}
-        userId={user_id}
-      />
+      <HomeUserProfile time={post_created_at} userNickName={user_nick_name} targetId={id} userId={user_id} />
       <ImgBox>
         {post_imgs && post_imgs.length > 0 && post_imgs.map((img, index) => <img key={index} src={img} />)}
       </ImgBox>
@@ -83,9 +119,9 @@ export default function HomeListItem({ post }) {
           <IoChatbubbleOutline />
           <strong>{commentCount}</strong>
         </button>
-        <button type="button" onClick={() => setToggleLike(!toggleLike)}>
+        <button type="button" onClick={handleLikeClick}>
           {toggleLike ? <AiFillLike /> : <AiOutlineLike />}
-          <strong>0</strong>
+          <strong>{likesCount}</strong>
         </button>
       </BtnBox>
     </StyledHomeListItem>
