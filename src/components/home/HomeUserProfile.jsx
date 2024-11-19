@@ -65,7 +65,7 @@ const ToggleButtonList = styled.div`
 `;
 export default function HomeUserProfile({ time, userNickName, userId, targetId }) {
   const [isVisible, setIsVisible] = useState(false);
-  const { handleToggle, data, deletePost } = useContext(HomeContext);
+  const { data, setData } = useContext(HomeContext);
   const formattedTime = format(new Date(time), 'ko');
   const user = data.find((userData) => userData.users.id === userId);
   const profileImage = user?.users.user_profile_image || null;
@@ -75,6 +75,14 @@ export default function HomeUserProfile({ time, userNickName, userId, targetId }
   } = supabase.storage.from('avatars').getPublicUrl('profile.png');
   const profileImageUrl = profileImage ? profileImage : publicUrl;
 
+  const deletePost = async (postId) => {
+    const { error } = await supabase.from('posts').delete().eq('id', postId);
+    if (error) {
+      console.error(error);
+    } else {
+      setData((prevData) => prevData.filter((post) => post.id !== postId));
+    }
+  };
   const handleClickDelete = () => {
     deletePost(targetId);
   };
@@ -88,7 +96,7 @@ export default function HomeUserProfile({ time, userNickName, userId, targetId }
         {userNickName} <span>{formattedTime}</span>
       </ProfileName>
       <ProfileToggle>
-        <button type="button" onClick={handleToggle(setIsVisible, isVisible)}>
+        <button type="button" onClick={() => setIsVisible(!isVisible)}>
           <IoMdMore />
         </button>
         {isVisible && (
