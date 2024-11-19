@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import LogoFontStyle from '../components/FontStyle';
 import styled from 'styled-components';
 import StyledButton from '../styles/StyledButton';
-import StyledSection from '../styles/StyledSection';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -36,6 +35,11 @@ const JoinPasswoard = styled.form`
     text-align: center;
     margin-top: 20px;
   }
+`;
+const StyledSection = styled.div`
+  height: 630px;
+  width: 450px;
+  background-color: white;
 `;
 
 const Label = styled.label`
@@ -73,7 +77,7 @@ function Join() {
   };
 
   const validEmail = (email) => {
-    const emailRegex = /^\w+@(naver\.com|gmail\.com)$/;
+    const emailRegex = /^\w+@(naver\.com)$/;
     return emailRegex.test(email);
   };
 
@@ -91,7 +95,7 @@ function Join() {
     }
 
     if (!validEmail(email)) {
-      toast.error('올바른 이메일 형식이 아닙니다. 다시 입력해주세요');
+      toast.error('네이버 이메일 주소를 입력하세요.');
       return;
     }
 
@@ -185,7 +189,7 @@ function Join() {
 
       
       setUser(data.user);
-      navigate('./Home');
+      navigate('/Home');
     } catch (err) {
       console.error('Unexpected Error:', err.message);
       toast.error(`예기치 못한 오류가 발생했습니다: ${err.message}`);
