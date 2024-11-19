@@ -7,6 +7,7 @@ import HomeComment from './HomeComment';
 import { HomeContext } from '../../context/HomeProvider';
 
 const CommentBg = styled.div`
+  z-index: 10;
   position: fixed;
   top: 0;
   left: 0;
@@ -14,6 +15,7 @@ const CommentBg = styled.div`
   height: 100%;
   background: rgba(0, 0, 0, 0.7);
   & > section {
+    z-index: 1;
     position: absolute;
     padding: 20px;
     padding-top: 60px;
@@ -36,18 +38,20 @@ const CommentCont = styled.div`
   padding: 20px;
 `;
 
-export default function HomeCommentList() {
-  const { chat, setChat, handleToggle, data } = useContext(HomeContext);
+export default function HomeCommentList({ postId }) {
+  const { setChatToggle, chat, data } = useContext(HomeContext);
 
   return (
     <CommentBg>
       <StyledSection>
-        <CloseBtn type="button" onClick={handleToggle(setChat, chat)}>
+        <CloseBtn type="button" onClick={() => setChatToggle(false)}>
           <IoIosClose />
         </CloseBtn>
-        <HomeCommentForm />
+        <HomeCommentForm postId={postId} />
         <CommentCont>
-          <HomeComment />
+          {chat.map((comment) => (
+            <HomeComment key={comment.id} comment={comment} />
+          ))}
         </CommentCont>
       </StyledSection>
     </CommentBg>

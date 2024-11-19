@@ -4,14 +4,13 @@ import HomeListItem from './HomeListItem';
 import HomeCommentList from './HomeCommentList';
 
 export default function HomeList() {
-  const { chat, data } = useContext(HomeContext);
-  console.log(data.posts);
+  const { chatToggle, data, postId } = useContext(HomeContext);
   return (
     <>
-      {data.posts?.map((post) => (
+      {data.map((post) => (
         <HomeListItem key={post.id} post={post} />
       ))}
-      {chat && <HomeCommentList />}
+      {chatToggle && <HomeCommentList postId={postId} />}
     </>
   );
 }

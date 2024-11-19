@@ -1,9 +1,13 @@
 import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import { format, register } from 'timeago.js';
+import koLocale from 'timeago.js/lib/lang/ko';
 import { IoMdMore } from 'react-icons/io';
 import imgLogo from '/src/assets/profile.png';
 import { HomeContext } from '../../context/HomeProvider';
+
+register('ko', koLocale);
 
 const ProfileWrapper = styled.div`
   display: flex;
@@ -62,6 +66,7 @@ const ToggleButtonList = styled.div`
 export default function HomeUserProfile({ time, userNickName, userId }) {
   const [isVisible, setIsVisible] = useState(false);
   const { handleToggle } = useContext(HomeContext);
+  const formattedTime = format(new Date(time), 'ko');
   const handleClickDelete = () => {};
 
   return (
@@ -70,7 +75,7 @@ export default function HomeUserProfile({ time, userNickName, userId }) {
         <img src={imgLogo} />
       </ProfileImg>
       <ProfileName>
-        {userNickName} <span>{time}</span>
+        {userNickName} <span>{formattedTime}</span>
       </ProfileName>
       <ProfileToggle>
         <button type="button" onClick={handleToggle(setIsVisible, isVisible)}>

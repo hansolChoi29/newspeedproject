@@ -4,35 +4,34 @@ import { supabase } from '../supabase/supabase';
 export const HomeContext = createContext(null);
 
 export default function HomeProvider({ children }) {
-  const [posts, setPosts] = useState([]);
-  const [chat, setChat] = useState(false);
+  const [data, setData] = useState([]);
+  const [chat, setChat] = useState([]);
+  const [chatToggle, setChatToggle] = useState(false);
+  const [postId, setPostId] = useState('');
+
 
   useEffect(() => {
     const fetchData = async () => {
       const { data, error } = await supabase.from('posts').select(`
           *,
-          users (
-          user_nick_name
-          ),
+          users (user_nick_name,id),
           comments(*),
           likes(*)
         `);
       if (error) {
         console.error(error);
       } else {
-        const posts = data;
-        const users = data.map((item) => item.users).filter(Boolean);
-        const comments = data.flatMap((item) => item.comments); 
-        const likes = data.flatMap((item) => item.likes); 
-        const formattedData = { posts, users, comments, likes };
-        setPosts(formattedData);
+        setData(data);
       }
     };
-
     fetchData();
   }, []);
 
   const handleToggle = (setter, value) => () => setter(!value);
 
-  return <HomeContext.Provider value={{ handleToggle, chat, setChat, data: posts }}>{children}</HomeContext.Provider>;
+  return (
+    <HomeContext.Provider value={{ handleToggle, chatToggle, setChatToggle, data, postId, setPostId, chat, setChat }}>
+      {children}
+    </HomeContext.Provider>
+  );
 }

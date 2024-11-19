@@ -1,13 +1,10 @@
 import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
-import { format, register } from 'timeago.js';
-import koLocale from 'timeago.js/lib/lang/ko';
 import { IoChatbubbleOutline } from 'react-icons/io5';
 import { AiOutlineLike, AiFillLike } from 'react-icons/ai';
 import HomeUserProfile from './HomeUserProfile';
 import { HomeContext } from '../../context/HomeProvider';
-
-register('ko', koLocale);
+import HomeCommentList from './HomeCommentList';
 
 const StyledHomeListItem = styled.div`
   margin-bottom: 50px;
@@ -49,7 +46,7 @@ const BtnBox = styled.div`
 `;
 
 export default function HomeListItem({ post }) {
-  const { chat: toggleChat, setChat: setToggleChat, handleToggle } = useContext(HomeContext);
+  const { setChat, setPostId, chatToggle, setChatToggle } = useContext(HomeContext);
   const [toggleLike, setToggleLike] = useState(false);
   const {
     id,
@@ -59,20 +56,25 @@ export default function HomeListItem({ post }) {
     user_id,
     users: { user_nick_name }
   } = post;
-  console.log(post);
-  const formattedTime = format(new Date(post_created_at), 'ko');
+  const handleClickToggleComment = () => {
+    setPostId(id);
+    setChatToggle(!chatToggle);
+    setChat(post.comments);
+  };
+  const commentCount = post.comments ? post.comments.length : 0;
+  console.log(post_imgs);
 
   return (
     <StyledHomeListItem>
-      <HomeUserProfile time={formattedTime} userNickName={user_nick_name} userId={user_id} />
-      <ImgBox>{post_imgs ?? post_imgs.map((imgs) => <img src={imgs} />)}</ImgBox>
+      <HomeUserProfile time={post_created_at} userNickName={user_nick_name} userId={user_id} />
+      <ImgBox>{post_imgs ?? post_imgs.map((img, index) => <img key={index} src={img} />)}</ImgBox>
       <TextContent>{post_contents}</TextContent>
       <BtnBox>
-        <button type="button" onClick={handleToggle(setToggleChat, toggleChat)}>
+        <button type="button" onClick={handleClickToggleComment}>
           <IoChatbubbleOutline />
-          <strong>10</strong>
+          <strong>{commentCount}</strong>
         </button>
-        <button type="button" onClick={handleToggle(setToggleLike, toggleLike)}>
+        <button type="button" onClick={() => setToggleLike(!toggleLike)}>
           {toggleLike ? <AiFillLike /> : <AiOutlineLike />}
           <strong>0</strong>
         </button>

@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import HomeUserProfile from './HomeUserProfile';
 import styled from 'styled-components';
+import { HomeContext } from '../../context/HomeProvider';
 
 const CommentCont = styled.div`
   margin: 30px 0;
@@ -10,11 +11,16 @@ const CommentWriting = styled.p`
   margin-left: 60px;
 `;
 
-export default function HomeComment() {
+export default function HomeComment({ comment }) {
+  if (!comment) {
+    return null;
+  }
+  const { comment_created_at, comment_data, user_id } = comment;
+
   return (
     <CommentCont>
-      <HomeUserProfile />
-      <CommentWriting>맞아요 맞아요 거기 추천함!</CommentWriting>
+      <HomeUserProfile time={comment_created_at} userId={user_id} />
+      <CommentWriting>{comment_data}</CommentWriting>
     </CommentCont>
   );
 }
