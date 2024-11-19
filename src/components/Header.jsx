@@ -46,24 +46,19 @@ function Header() {
   const onChangeSearch = (e) => {
     setSearchValue(e.target.value);
   };
-
+  
   const searchedValue = async (e) => {
     e.preventDefault();
     const { data, error } = await supabase.from('posts').select('*').like('post_contents', '@setSearchValue@')
     console.log('searched: ', { data, error });
-    setUserProfile(data.user);
-
-  //   const { data: usersTable , errorUsersTable } = await supabase.from('users').select('*')
-  //   console.log('searched: ', { data, error });
-  //   setUser(data.user);
+    setData(data.user);
   };
-
-  // const { data: urlData, error: urlError } = supabase.storage.from('post-images').getPublicUrl(data.path);   // src={publicUrl}
-
+  
+  console.log(userProfile)
   const { image } = supabase.storage.from('avatars').getPublicUrl('profile.png');
 
   //테스트용 id
-  const 우석핑 = '9e351071-01b9-4827-b797-6685d3348072';
+  // const 우석핑 = '9e351071-01b9-4827-b797-6685d3348072';
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -76,18 +71,17 @@ function Header() {
           console.error('Error fetching user:', error);
           return;
         }
-        console.log(data, user);
-
+        console.log(user)
         const { data, error: usersError } = await supabase
           .from('users')
-          .select(['user_nick_name', 'user_profile_image'])
-          .eq('id', 우석핑) // 실제 유저의 데이터 넣기    ex)유저.a.b.c.id
+          .select('user_nick_name, user_profile_image')
+          .eq('id', user.id) // 실제 유저의 데이터 넣기    ex)유저.a.b.c.id
           .single();
         if (usersError) {
           console.error('Error fetching users:', usersError);
           return;
         }
-        console.log(data);
+        console.log('data', data);
         setUserProfile({ nickname: data.user_nick_name || 'Guest', profileImage: data.user_profile_image || '' }); // 기본값으로 'Guest' 설정
       } catch (error) {
         console.log(error);
@@ -111,7 +105,7 @@ function Header() {
         <p>{userProfile.nickname}님 안녕하세요</p>
         <Link to="/mypage">
           <p>
-            <img src={userProfile.user_profile_image} alt="프로필사진" />
+            <img src='https://wkwqqcudsdumesjqcqht.supabase.co/storage/v1/object/public/avatars/9e351071-01b9-4827-b797-6685d3348072_1732021251989_123.png' alt="프로필사진" />
           </p>
         </Link>
       </MyPageStyle>

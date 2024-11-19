@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
+import { HomeContext } from '../../context/HomeProvider';
+import styled from 'styled-components';
 
 const SearchBox = styled.form`
   border: 2px solid gray;
 `;
 
 const Search = () => {
+  const {data, setData} = useContext(HomeContext);
+  console.log(data);
   const [searchValue, setSearchValue] = useState('');
 
   const onChangeSearch = (e) => {
@@ -14,7 +18,7 @@ const Search = () => {
   const searchedValue = async () => {
     const { data, error } = await supabase.from('posts').select().like('post_contents', '%searchValue%');
     console.log('searched: ', { data, error });
-    setUser(data.user);
+    setData(data.user);
   };
 
   return (
