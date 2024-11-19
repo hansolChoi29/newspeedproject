@@ -1,13 +1,20 @@
 import { supabase } from '../../supabase/supabase';
 import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 import { IoChatbubbleOutline } from 'react-icons/io5';
 import { AiOutlineLike, AiFillLike } from 'react-icons/ai';
 import HomeUserProfile from './HomeUserProfile';
 import { HomeContext } from '../../context/HomeProvider';
+import { IoMdMore } from 'react-icons/io';
 
 const StyledHomeListItem = styled.div`
   margin-bottom: 50px;
+`;
+const HomeListItemTitle = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 `;
 const ImgBox = styled.div`
   display: flex;
@@ -32,7 +39,7 @@ const TextContent = styled.div`
 const BtnBox = styled.div`
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 15px;
   margin-top: 10px;
   button {
     display: flex;
@@ -48,8 +55,40 @@ const BtnBox = styled.div`
   }
 `;
 
+const ProfileToggle = styled.div`
+  position: relative;
+  margin-left: auto;
+  > button {
+    padding: 0;
+    border: none;
+    font-size: 1.25rem;
+    background: none;
+  }
+`;
+
+const ToggleButtonList = styled.div`
+  position: absolute;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  width: 60px;
+  text-align: center;
+  border: 1px solid #999;
+  background: #fff;
+  a,
+  button {
+    padding: 10px 0;
+    font-size: 0.875rem;
+    transition: 0.2s;
+    background: none;
+    &:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
+  }
+`;
+
 export default function HomeListItem({ post }) {
-  const { setChat, setPostId, chatToggle, setChatToggle } = useContext(HomeContext);
+  const { setData, setChat, setPostId, chatToggle, setChatToggle } = useContext(HomeContext);
   const {
     id,
     post_contents,
@@ -62,6 +101,7 @@ export default function HomeListItem({ post }) {
   } = post;
   const [toggleLike, setToggleLike] = useState(false);
   const [likesCount, setLikesCount] = useState(likes.length);
+  const [isVisible, setIsVisible] = useState(false);
 
   const commentCount = post.comments ? post.comments.length : 0;
 
@@ -106,10 +146,39 @@ export default function HomeListItem({ post }) {
       console.error(error);
     }
   };
+  const deletePost = async (postId) => {
+    const { error } = await supabase.from('posts').delete().eq('id', postId);
+    if (error) {
+      console.error(error);
+    } else {
+      setData((prevData) => prevData.filter((post) => post.id !== postId));
+    }
+  };
+
+  const handleClickDelete = () => {
+    deletePost(id);
+  };
 
   return (
     <StyledHomeListItem>
-      <HomeUserProfile time={post_created_at} userNickName={user_nick_name} targetId={id} userId={user_id} />
+      <HomeListItemTitle>
+        <HomeUserProfile time={post_created_at} userNickName={user_nick_name} userId={user_id} />
+        <ProfileToggle>
+          <button type="button" onClick={() => setIsVisible(!isVisible)}>
+            <IoMdMore />
+          </button>
+          {isVisible && (
+            <ToggleButtonList>
+              <Link to={`/post/${id}`} state={{ id }}>
+                수정
+              </Link>
+              <button type="button" onClick={handleClickDelete}>
+                삭제
+              </button>
+            </ToggleButtonList>
+          )}
+        </ProfileToggle>
+      </HomeListItemTitle>
       <ImgBox>
         {post_imgs && post_imgs.length > 0 && post_imgs.map((img, index) => <img key={index} src={img} />)}
       </ImgBox>
