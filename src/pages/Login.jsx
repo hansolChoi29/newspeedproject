@@ -86,6 +86,7 @@ function Login() {
       handleGoHome();
     } else {
       toast('이메일 또는 패스워드가 일치하지 않습니다.');
+      return;
     }
   };
 
@@ -101,6 +102,10 @@ function Login() {
 
   const handleSingup = () => {
     navigate('./Join');
+  };
+
+  const FindPasswordPage = () => {
+    navigate('./FindPassword');
   };
 
   return (
@@ -126,7 +131,6 @@ function Login() {
                 onChange={(e) => {
                   setEmail(e.target.value);
                 }}
-                required
               ></input>
               <Label>패스워드</Label>
               <input
@@ -136,9 +140,8 @@ function Login() {
                 onChange={(e) => {
                   setPassword(e.target.value);
                 }}
-                required
               ></input>
-              {/* <P>패스워드를 잊으셨나요?</P> */}
+              <P onClick={FindPasswordPage}>패스워드를 잊으셨나요?</P>
               <StyledButton
                 style={{ margin: '20px', width: '300px', height: '70px', marginBottom: '-10px' }}
                 type="button"
