@@ -28,9 +28,6 @@ export default function HomeProvider({ children }) {
   }, []);
 
   return (
-<<<<<<< HEAD
-    <HomeContext.Provider value={{ handleToggle, chatToggle, setChatToggle, data, postId, setPostId, chat, setChat, setData }}>
-=======
     <HomeContext.Provider
       value={{
         chatToggle,
@@ -45,7 +42,6 @@ export default function HomeProvider({ children }) {
         setComments
       }}
     >
->>>>>>> f84dce5208d2031d5f43efe01ea97a622497d73d
       {children}
     </HomeContext.Provider>
   );
