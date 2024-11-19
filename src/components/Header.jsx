@@ -33,15 +33,30 @@ const MyPageStyle = styled.div`
   flex-direction: row;
 `;
 
-
-  
-
+const SearchBox = styled.form`
+  border: 2px solid gray;
+`;
 
 function Header() {
   const [userProfile, setUserProfile] = useState({
     nickname: '',
     profileImage: ''
   });
+  const [searchValue, setSearchValue] = useState('');
+  const onChangeSearch = (e) => {
+    setSearchValue(e.target.value);
+  };
+
+  const searchedValue = async (e) => {
+    e.preventDefault();
+    const { data, error } = await supabase.from('posts').select('*').like('post_contents', '@setSearchValue@')
+    console.log('searched: ', { data, error });
+    setUserProfile(data.user);
+
+  //   const { data: usersTable , errorUsersTable } = await supabase.from('users').select('*')
+  //   console.log('searched: ', { data, error });
+  //   setUser(data.user);
+  };
 
   // const { data: urlData, error: urlError } = supabase.storage.from('post-images').getPublicUrl(data.path);   // src={publicUrl}
 
@@ -86,6 +101,11 @@ function Header() {
       <Link to="/home">
         <LogoFontStyle>Voir le chemin</LogoFontStyle>
       </Link>
+
+      <SearchBox onSubmit={searchedValue}>
+        <input type="text" placeholder="어디가고 싶어?" value={searchValue} onChange={onChangeSearch} />
+        <button type="submit">🔍</button>
+      </SearchBox>
 
       <MyPageStyle>
         <p>{userProfile.nickname}님 안녕하세요</p>

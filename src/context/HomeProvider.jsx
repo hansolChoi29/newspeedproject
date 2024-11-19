@@ -29,7 +29,7 @@ export default function HomeProvider({ children }) {
   const handleToggle = (setter, value) => () => setter(!value);
 
   return (
-    <HomeContext.Provider value={{ handleToggle, chatToggle, setChatToggle, data, postId, setPostId, chat, setChat }}>
+    <HomeContext.Provider value={{ handleToggle, chatToggle, setChatToggle, data, postId, setPostId, chat, setChat, setData }}>
       {children}
     </HomeContext.Provider>
   );
