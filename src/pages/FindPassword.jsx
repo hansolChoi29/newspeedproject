@@ -25,6 +25,11 @@ const CardLabelInput = styled.div`
   margin-bottom: 200px;
   gap: 10px;
   font-size: 20px;
+  & input {
+    text-align: center;
+    margin-top: 10px;
+    height: 50px;
+  }
 `;
 
 export const FindPassword = () => {

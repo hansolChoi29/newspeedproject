@@ -4,25 +4,23 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import PalmtreeImg from '../image/LoginPalmtreeImg.png';
 import whaleImg from '../image/LoginWhaleImg.png';
-import StyledButton from '../styles/StyledButton';
-import StyledSection from '../styles/StyledSection';
 import { supabase } from '../supabase/supabase';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Button from '../components/login/button';
+import Loginpassword from '../components/login/input';
 
 const LoginCard = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-
-  /* height: 100%; */
   section {
     background-color: white;
     box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.3);
   }
 `;
 
-const LoginPasswoard = styled.form`
+const LoginPasswoardStyle = styled.form`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -39,12 +37,6 @@ const LoginPasswoard = styled.form`
     text-align: center;
     margin-top: -20px;
   }
-`;
-
-const Label = styled.label`
-  display: block;
-  margin-top: 10px;
-  font-size: 13px;
 `;
 
 const P = styled.p`
@@ -69,6 +61,12 @@ const LoginWhaleImg = styled.img`
 
 const BackgroundColor = styled.div`
   background-image: linear-gradient(to right top, #87ceeb, #96dce0, #b4e6d6, #d7eed4, #f5f5dc);
+`;
+
+const StyledSection = styled.div`
+  height: 630px;
+  width: 450px;
+  background-color: white;
 `;
 
 function Login() {
@@ -122,43 +120,12 @@ function Login() {
               <h1 style={{ marginTop: '30px', fontSize: '45px' }}>Voir le chemin</h1>
             </LogoFontStyle>
 
-            <LoginPasswoard>
-              <Label>이메일</Label>
-              <input
-                type="email"
-                placeholder="이메일을 입력해주세요."
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                }}
-              ></input>
-              <Label>패스워드</Label>
-              <input
-                type="password"
-                placeholder="패스워드를 입력해주세요."
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                }}
-              ></input>
-              <P onClick={FindPasswordPage}>패스워드를 잊으셨나요?</P>
-              <StyledButton
-                style={{ margin: '20px', width: '300px', height: '70px', marginBottom: '-10px' }}
-                type="button"
-                onClick={loginUser}
-              >
-                로그인
-              </StyledButton>
+            <Loginpassword email={email} setEmail={setEmail} password={password} setPassword={setPassword} />
 
-              <StyledButton
-                style={{ width: '300px', height: '70px', marginBottom: '10px' }}
-                color="#F4A460"
-                type="button"
-                onClick={handleSingup}
-              >
-                회원가입
-              </StyledButton>
-            </LoginPasswoard>
+            <LoginPasswoardStyle>
+              <P onClick={FindPasswordPage}>패스워드를 잊으셨나요?</P>
+              <Button loginUser={loginUser} handleSingup={handleSingup} loginText="로그인" signupText="회원가입" />
+            </LoginPasswoardStyle>
           </StyledSection>
         </LoginCard>
       </BackgroundColor>
