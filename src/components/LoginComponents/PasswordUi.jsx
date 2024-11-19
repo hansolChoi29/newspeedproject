@@ -1,5 +1,7 @@
 import React from 'react';
 
-export const PasswordUi = () => {
+const PasswordUi = () => {
   return <div>PasswordUi</div>;
 };
+
+export default PasswordUi;
