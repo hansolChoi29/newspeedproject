@@ -169,8 +169,9 @@ const MyPage = () => {
         if (userError) throw userError;
 
         // console.log('Fetched User Data:', userData);
-
-        setProfileImage(userData.user_profile_image || myprofile); // 이미지가 없으면 기본 이미지로 설정
+        const profileimgUrl = JSON.parse(userData.user_profile_image);
+        setProfileImage(profileimgUrl.publicUrl || myprofile); // 이미지가 없으면 기본 이미지로 설정
+        console.log(profileimgUrl.publicUrl);
         setNickname(userData.user_nick_name || '닉네임 없음'); // 닉네임이 없으면 기본값 설정
         // 2. 게시글 데이터 가져오기
         const { data: postsData, error: postsError } = await supabase
@@ -239,6 +240,9 @@ const MyPage = () => {
 
   const handleProfileImageChange = async (e) => {
     const file = e.target.files[0];
+
+    console.log('Profile Image URL:', profileImage);
+    console.log(file);
     if (!file) {
       alert('파일을 선택해주세요.');
       return;
@@ -256,7 +260,7 @@ const MyPage = () => {
       // 파일 업로드
       const fileName = `${user.id}_${Date.now()}_${file.name}`;
       const { data: uploadedFile, error: uploadError } = await supabase.storage.from('avatars').upload(fileName, file);
-      console.log(uploadedFile);
+
       if (uploadError) {
         console.error('Upload Error:', uploadError.message);
         alert('파일 업로드에 실패했습니다.');
@@ -270,25 +274,25 @@ const MyPage = () => {
       console.log('Full File Path:', fullFilePath);
 
       // 👉 Public URL 생성
-      const { data: publicURL, error: urlError } = supabase.storage.from('avatars').getPublicUrl(fullFilePath);
-      console.log(publicURL);
+      const { data: publicUrl, error: urlError } = supabase.storage.from('avatars').getPublicUrl(fullFilePath);
+      console.log(publicUrl);
       // 👉 Public URL 검증
       if (urlError) {
         console.error('URL Error:', urlError.message);
         alert('Public URL 생성에 실패했습니다.');
         return;
-      } else if (!publicURL) {
+      } else if (!publicUrl) {
         console.error('Public URL is undefined');
         alert('공개 URL이 생성되지 않았습니다.');
         return;
       }
 
-      console.log('Generated Public URL:', publicURL);
+      console.log('Generated Public URL:', publicUrl);
 
       // DB 업데이트
       const { error: updateError } = await supabase
         .from('users')
-        .update({ user_profile_image: publicURL })
+        .update({ user_profile_image: publicUrl })
         .eq('id', user.id);
 
       if (updateError) {
@@ -298,7 +302,7 @@ const MyPage = () => {
       }
 
       // 상태 업데이트
-      setProfileImage(publicURL);
+      setProfileImage(publicUrl);
       alert('프로필 이미지가 성공적으로 저장되었습니다.');
     } catch (err) {
       console.error('Error in handleProfileImageChange:', err.message);
