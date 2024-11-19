@@ -45,7 +45,7 @@ const FileInputLabel = styled.img`
   background-image: url(${profileupdate});
   position: absolute;
   right: 390px;
-  bottom: 660px;
+  bottom: 610px;
   background-size: cover;
   background-position: center;
   cursor: pointer;
@@ -62,13 +62,19 @@ const NicknameContainer = styled.div`
 
 const Nickname = styled.h2`
   font-size: 20px;
-  margin: 10px;
+  margin: 0;
 `;
-
-const PencilIcon = styled.img`
-  width: 20px;
+const InputNickname = styled.input`
+  border-radius: 5px;
   height: 20px;
+  padding: 4px;
+`;
+const PencilIcon = styled.img`
+  width: 25px;
+  height: 25px;
   cursor: pointer;
+  margin: 0;
+  padding: 0;
 `;
 
 const Divider = styled.hr`
@@ -118,9 +124,12 @@ const History = styled.img`
 const StyledText = styled.div`
   font-size: 16px;
   color: #333;
-  margin-bottom: 10px;
   display: flex;
   margin-right: auto;
+  font-weight: bold;
+  position: absolute;
+  right: 590px;
+  top: 380px;
 `;
 
 const MyPage = () => {
@@ -293,7 +302,7 @@ const MyPage = () => {
         <FileInput id="file-upload" type="file" accept="image/*" onChange={handlePofileImageChange} />
         <NicknameContainer>
           {isEditing ? (
-            <input
+            <InputNickname
               type="text"
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
@@ -312,7 +321,8 @@ const MyPage = () => {
       <LikesSection>
         <History src={hart} alt="Likes" width="30px" /> 좋아요 수
         <h2>
-          <span>{totalLikes}</span>
+          {/* <span>{totalLikes}</span> */}
+          <span>+999</span>
         </h2>
       </LikesSection>
       <PostList>
