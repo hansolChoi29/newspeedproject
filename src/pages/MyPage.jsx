@@ -8,8 +8,8 @@ import { supabase } from '../supabase/supabase';
 import history from '../assets/history.png';
 
 const Container = styled.form`
-  width: 800px;
-  height: 900px;
+  width: 600px;
+  height: 800px;
   margin: 0 auto;
   padding: 20px;
   border: 1px solid #ccc;
@@ -54,6 +54,7 @@ const NicknameContainer = styled.div`
   justify-content: center;
   align-items: center;
   gap: 10px;
+  height: 100px;
 `;
 
 const Nickname = styled.h2`
@@ -68,7 +69,7 @@ const PencilIcon = styled.img`
 `;
 
 const Divider = styled.hr`
-  width: 800px;
+  width: 600px;
   margin: 30px 0;
   border: none;
   border-top: 1px solid #ccc;
@@ -78,7 +79,8 @@ const LikesSection = styled.div`
   display: flex;
   gap: 10px;
   align-items: center;
-  margin-left: auto;
+  margin-left: 400px;
+
   & span {
     font-size: 24px;
     color: red;
@@ -131,6 +133,7 @@ const MyPage = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      console.log(supabase);
       try {
         setLoading(true);
         setError(null);
@@ -161,7 +164,7 @@ const MyPage = () => {
         const user = session?.user; // 로그인된 사용자 정보 가져오기
         if (!user) {
           console.warn('No user logged in.');
-          setNickname('닉네임 없음');
+          // setNickname('닉네임 없음');
           setPofileImage(myprofile);
           return;
         }
