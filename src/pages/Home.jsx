@@ -1,47 +1,28 @@
-import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { MdEdit } from 'react-icons/md';
-import imgLogo from '/src/assets/profile.png';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
+import HomeProvider from '../context/HomeProvider';
+import StyledSection from '../styles/StyledSection';
+import HomeList from '../components/home/HomeList';
 
-const PostItem = styled.div``;
-const PostItemTitle = styled.div`
-  display: flex;
+const StyledHomeCont = styled.div`
+  button {
+    cursor: pointer;
+    border: none;
+  }
   a {
     color: inherit;
-  }
-`;
-
-const PostItemImg = styled.div`
-  display: flex;
-  align-content: center;
-  gap: 10px;
-  img {
-    width: 100%;
-    max-width: 100px;
+    text-decoration: none;
   }
 `;
 
 function Home() {
   return (
-    <>
-      <Header>
-        <Footer>
-          <PostItem>
-            <PostItemTitle>
-              홍길동 1시간전{' '}
-              <Link to="/home/:id">
-                <MdEdit />
-              </Link>
-            </PostItemTitle>
-            <PostItemImg>
-              <img src={imgLogo} />
-            </PostItemImg>
-          </PostItem>
-        </Footer>
-      </Header>
-    </>
+    <HomeProvider>
+      <StyledHomeCont>
+        <StyledSection>
+          <HomeList />
+        </StyledSection>
+      </StyledHomeCont>
+    </HomeProvider>
   );
 }
 
