@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { format, register } from 'timeago.js';
 import koLocale from 'timeago.js/lib/lang/ko';
 import { IoMdMore } from 'react-icons/io';
-import imgLogo from '/src/assets/profile.png';
 import { HomeContext } from '../../context/HomeProvider';
 
 register('ko', koLocale);
@@ -63,16 +62,16 @@ const ToggleButtonList = styled.div`
     }
   }
 `;
-export default function HomeUserProfile({ time, userNickName, userId }) {
+export default function HomeUserProfile({ time, userNickName, userId, userProfile }) {
   const [isVisible, setIsVisible] = useState(false);
   const { handleToggle } = useContext(HomeContext);
   const formattedTime = format(new Date(time), 'ko');
-  const handleClickDelete = () => {};
+  const handleClickDelete = () => { };
 
   return (
     <ProfileWrapper>
       <ProfileImg>
-        <img src={imgLogo} />
+        <img src={userProfile} />
       </ProfileImg>
       <ProfileName>
         {userNickName} <span>{formattedTime}</span>

@@ -9,12 +9,11 @@ export default function HomeProvider({ children }) {
   const [chatToggle, setChatToggle] = useState(false);
   const [postId, setPostId] = useState('');
 
-
   useEffect(() => {
     const fetchData = async () => {
       const { data, error } = await supabase.from('posts').select(`
           *,
-          users (user_nick_name,id),
+          users (user_nick_name,id,user_profile_image),
           comments(*),
           likes(*)
         `);

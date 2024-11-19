@@ -14,6 +14,9 @@ const ImgBox = styled.div`
   gap: 15px;
   margin: 15px 0;
   img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
     border-radius: 5px;
   }
 `;
@@ -54,7 +57,7 @@ export default function HomeListItem({ post }) {
     post_created_at,
     post_imgs,
     user_id,
-    users: { user_nick_name }
+    users: { user_nick_name, user_profile_image }
   } = post;
   const handleClickToggleComment = () => {
     setPostId(id);
@@ -62,12 +65,18 @@ export default function HomeListItem({ post }) {
     setChat(post.comments);
   };
   const commentCount = post.comments ? post.comments.length : 0;
-  console.log(post_imgs);
 
   return (
     <StyledHomeListItem>
-      <HomeUserProfile time={post_created_at} userNickName={user_nick_name} userId={user_id} />
-      <ImgBox>{post_imgs ?? post_imgs.map((img, index) => <img key={index} src={img} />)}</ImgBox>
+      <HomeUserProfile
+        time={post_created_at}
+        userNickName={user_nick_name}
+        userProfile={user_profile_image}
+        userId={user_id}
+      />
+      <ImgBox>
+        {post_imgs && post_imgs.length > 0 && post_imgs.map((img, index) => <img key={index} src={img} />)}
+      </ImgBox>
       <TextContent>{post_contents}</TextContent>
       <BtnBox>
         <button type="button" onClick={handleClickToggleComment}>
