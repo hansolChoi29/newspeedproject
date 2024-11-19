@@ -9,13 +9,14 @@ import history from '../assets/history.png';
 
 const Container = styled.form`
   width: 800px;
-  height: 800px;
+  height: 900px;
   margin: 0 auto;
   padding: 20px;
   border: 1px solid #ccc;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  margin-top: 100px;
   align-items: center;
   font-family: Arial, sans-serif;
 `;
@@ -30,9 +31,7 @@ const ProfileImage = styled.img`
   height: 150px;
   border-radius: 50%;
   margin-bottom: 10px;
-  display: contents;
   display: flex;
-  flex-direction: column;
   align-items: center;
 `;
 
@@ -40,10 +39,9 @@ const FileInput = styled.input`
   display: none;
 `;
 
-const FileInputLabel = styled.label`
-  display: inline-block;
-  width: 50px;
-  height: 50px;
+const FileInputLabel = styled.img`
+  width: 30px;
+  height: 30px;
   background-image: url(${profileupdate});
   background-size: cover;
   background-position: center;
@@ -78,9 +76,9 @@ const Divider = styled.hr`
 
 const LikesSection = styled.div`
   display: flex;
-  align-items: flex-start;
   gap: 10px;
   align-items: center;
+  margin-left: auto;
   & span {
     font-size: 24px;
     color: red;
@@ -89,9 +87,10 @@ const LikesSection = styled.div`
 `;
 
 const PostList = styled.div`
-  padding: 20px; /* 리스트 내부 간격 */
+  padding: 20px;
   font-size: 20px;
-  line-height: 1.8; /* 기본 줄 간격 */
+  line-height: 1.8;
+  width: 100%;
 `;
 
 const Post = styled.div`
@@ -106,87 +105,193 @@ const PostAuthor = styled.div`
   font-weight: bold;
   margin-bottom: 5px;
 `;
+
 const History = styled.img`
   width: 30px;
 `;
+
 const StyledText = styled.div`
   font-size: 16px;
   color: #333;
   margin-bottom: 10px;
+  display: flex;
+  margin-right: auto;
 `;
+
 const MyPage = () => {
-  const [profileImage, setProfileImage] = useState(myprofile);
-  const [nickname, setNickname] = useState(''); // 닉네임
-  const [posts, setPosts] = useState([]); // 게시글 목록
-  const [isEditing, setIsEditing] = useState(false); // 닉네임 수정 상태
-  const [likesCount, setLikesCount] = useState(0); // 좋아요 총합
+  const [profileImage, setPofileImage] = useState(myprofile);
+  const [nickname, setNickname] = useState('');
+  const [posts, setPosts] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [totalLikes, setTotalLikes] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const nicknameInputRef = useRef(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // 1. `users` 테이블에서 닉네임 가져오기
-        const { data: userData, error: userError } = await supabase.from('users').select('user_nick_name').single();
-        if (userError) throw userError;
-        setNickname(userData.user_nick_name); // 닉네임 설정
+        setLoading(true);
+        setError(null);
 
-        // 2. `posts` 테이블에서 게시글 가져오기
-        const { data: postsData, error: postsError } = await supabase.from('posts').select('id, post_contents');
+        // 로그인 상태 확인 (주석 처리 유지)
+        // const {
+        //   data: { session },
+        //   error: sessionError,
+        // } = await supabase.auth.getSession();
+        // if (sessionError) throw sessionError;
+
+        // const user = session?.user;
+        // if (!user) throw new Error('User is not logged in');
+
+        // 테스트용 고정 user_id
+
+        // 1. 유저 데이터 가져오기
+        const {
+          data: { session },
+          error: sessionError
+        } = await supabase.auth.getSession();
+
+        if (sessionError) {
+          console.error('Error fetching session:', sessionError.message);
+          throw sessionError;
+        }
+
+        const user = session?.user; // 로그인된 사용자 정보 가져오기
+        if (!user) {
+          console.warn('No user logged in.');
+          setNickname('닉네임 없음');
+          setPofileImage(myprofile);
+          return;
+        }
+
+        console.log('Logged-in User:', user);
+
+        // 1. 유저 데이터 가져오기
+        const { data: userData, error: userError } = await supabase
+          .from('users')
+          .select('user_pofile_image, user_nick_name') // 정확한 컬럼 이름 확인 필요
+          .eq('id', user.id)
+          .single();
+
+        console.log('Fetched User Data:', userData);
+        if (userError) {
+          console.error('Error fetching user data:', userError.message);
+          throw userError;
+        }
+
+        if (userData) {
+          const pofileImage = userData.user_pofile_image || myprofile; // 기본값 처리
+          const nickname = userData.user_nick_name || '닉네임 없음'; // 기본값 처리
+
+          setPofileImage(pofileImage); // 상태 업데이트
+          setNickname(nickname); // 상태 업데이트
+        } else {
+          console.warn('No user data found for the logged-in user.');
+          setNickname('닉네임 없음');
+          setPofileImage(myprofile);
+        }
+
+        // 2. 게시글 데이터 가져오기
+        const { data: postsData, error: postsError } = await supabase
+          .from('posts')
+          .select('post_contents')
+          .eq('user_id', user.id);
         if (postsError) throw postsError;
-        setPosts(postsData); // 게시글 설정
 
-        // 3. `likes` 테이블에서 좋아요 수 가져오기
-        const { data: likesData, error: likesError } = await supabase.from('likes').select('likes_count');
+        console.log('Fetched Posts Data:', postsData);
+
+        // 3. 좋아요 데이터 가져오기
+        const { data: likesData, error: likesError } = await supabase
+          .from('likes')
+          .select('likes_count')
+          .eq('user_id', user.id);
         if (likesError) throw likesError;
+
+        console.log('Fetched Likes Data:', likesData);
+
         const totalLikes = likesData.reduce((sum, like) => sum + like.likes_count, 0);
-        setLikesCount(totalLikes); // 좋아요 총합 설정
-      } catch (error) {
-        console.error('Error fetching data:', error);
+
+        // 상태 업데이트
+        setPosts(postsData || []); // 게시글 상태 업데이트
+        setTotalLikes(totalLikes); // 좋아요 총합 업데이트
+      } catch (err) {
+        console.error('Error in fetchData:', err.message);
+        setError(err.message); // 에러 상태 업데이트
+      } finally {
+        setLoading(false); // 로딩 상태 해제
       }
     };
 
     fetchData();
   }, []);
 
-  const saveNickname = async () => {
+  const handleNicknameSave = async () => {
     try {
-      // Supabase에 닉네임 업데이트
-      const { error } = await supabase.from('users').update({ user_nick_name: nickname }).eq('id', 1); // 예: 사용자 ID가 1
+      const user = supabase.auth.user();
+      if (!user) throw new Error('User is not logged in');
+
+      const { error } = await supabase.from('users').update({ user_nick_name: nickname }).eq('id', user.id);
       if (error) throw error;
 
-      setIsEditing(false); // 수정 모드 종료
+      setIsEditing(false);
       alert('닉네임이 저장되었습니다.');
-    } catch (error) {
-      console.error('Error updating nickname:', error);
+    } catch (err) {
+      setError(err.message);
     }
   };
-  // 연필 아이콘 클릭 시 동작
+
+  const handlePofileImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+      const user = supabase.auth.user();
+      if (!user) throw new Error('User is not logged in');
+
+      const fileName = `${user.id}_${Date.now()}`;
+      const { data, error: uploadError } = await supabase.storage.from('avatars').upload(fileName, file);
+
+      if (uploadError) throw uploadError;
+
+      const { publicURL, error: urlError } = supabase.storage.from('avatars').getPublicUrl(data.path);
+
+      if (urlError) throw urlError;
+
+      const { error: updateError } = await supabase
+        .from('users')
+        .update({ user_pofile_image: publicURL })
+        .eq('id', user.id);
+      if (updateError) throw updateError;
+
+      setPofileImage(publicURL); // 수정된 상태 업데이트
+      alert('프로필 이미지가 저장되었습니다.');
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   const focusNicknameInput = () => {
-    setIsEditing(true); // 수정 모드 활성화
-    if (nicknameInputRef.current) {
-      nicknameInputRef.current.focus(); // 입력 필드에 포커스
-    }
+    setIsEditing(true);
+    if (nicknameInputRef.current) nicknameInputRef.current.focus();
   };
+
   return (
     <Container>
       <Section>
         <ProfileImage src={profileImage} alt="Profile" />
-        <FileInputLabel src={profileupdate} alt="profileupdate" />
-        <FileInput
-          id="file-upload"
-          type="file"
-          accept="image/*"
-          onChange={(e) => setProfileImage(URL.createObjectURL(e.target.files[0]))}
-        />
-        <FileInputLabel htmlFor="file-upload" />
+        <FileInputLabel as="label" htmlFor="file-upload" />
+        <FileInput id="file-upload" type="file" accept="image/*" onChange={handlePofileImageChange} />
         <NicknameContainer>
           {isEditing ? (
             <input
-              ref={nicknameInputRef}
               type="text"
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
-              onBlur={saveNickname} // 수정 후 저장
+              ref={nicknameInputRef}
+              onBlur={handleNicknameSave}
+              onKeyDown={(e) => e.key === 'Enter' && handleNicknameSave()}
               autoFocus
             />
           ) : (
@@ -197,18 +302,17 @@ const MyPage = () => {
         <Divider />
       </Section>
       <LikesSection>
-        <History src={hart} alt="Likes" width="30px" />
+        <History src={hart} alt="Likes" width="30px" /> 좋아요 수
         <h2>
-          <span>{likesCount}</span>
+          <span>{totalLikes}</span>
         </h2>
       </LikesSection>
-
       <PostList>
         <StyledText>
           <History src={history} alt="history" /> 내가 쓴 게시글
         </StyledText>
-        {posts.slice(0, 3).map((post) => (
-          <Post key={post.id}>
+        {posts.slice(0, 3).map((post, index) => (
+          <Post key={index}>
             <PostAuthor>{nickname}</PostAuthor>
             <div>{post.post_contents}</div>
           </Post>
