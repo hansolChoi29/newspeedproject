@@ -9,7 +9,6 @@ import StyledSection from '../styles/StyledSection';
 import { supabase } from '../supabase/supabase';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { FindPassword } from './FindPassword';
 
 const LoginCard = styled.div`
   display: flex;
