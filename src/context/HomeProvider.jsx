@@ -26,10 +26,48 @@ export default function HomeProvider({ children }) {
     fetchData();
   }, []);
 
+  const deletePost = async (postId) => {
+    const { error } = await supabase.from('posts').delete().eq('id', postId);
+    if (error) {
+      console.error(error);
+    } else {
+      setData((prevData) => prevData.filter((post) => post.id !== postId));
+    }
+  };
+
+  const deleteComment = async (commentId) => {
+    const { error } = await supabase.from('comments').delete().eq('id', commentId);
+    if (error) {
+      console.error(error);
+    } else {
+      setData((prevData) => {
+        return prevData.map((post) => {
+          if (post.comments) {
+            post.comments = post.comments.filter((comment) => comment.id !== commentId);
+          }
+          return post;
+        });
+      });
+    }
+  };
+
   const handleToggle = (setter, value) => () => setter(!value);
 
   return (
-    <HomeContext.Provider value={{ handleToggle, chatToggle, setChatToggle, data, postId, setPostId, chat, setChat }}>
+    <HomeContext.Provider
+      value={{
+        handleToggle,
+        chatToggle,
+        setChatToggle,
+        data,
+        postId,
+        setPostId,
+        chat,
+        setChat,
+        deletePost, 
+        deleteComment
+      }}
+    >
       {children}
     </HomeContext.Provider>
   );

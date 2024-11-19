@@ -38,16 +38,19 @@ export default function HomeCommentForm({ postId }) {
         alert('로그인 후 댓글을 작성해주세요.');
         return;
       }
-      const { error } = await supabase.from('comments').insert([
+
+      const { data, error } = await supabase.from('comments').insert([
         {
           post_id: postId,
-          comment_data: comment, 
+          comment_data: comment,
           user_id: user.id
         }
       ]);
 
       if (error) throw error;
-      setComment('');
+
+      setComments((prevComments) => [...prevComments, data[0]]); 
+      setComment(''); 
     } catch (error) {
       console.error(error.message);
     }

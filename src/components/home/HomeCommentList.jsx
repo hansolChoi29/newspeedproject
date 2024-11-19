@@ -1,6 +1,7 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { IoIosClose } from 'react-icons/io';
+import { supabase } from '../../supabase/supabase';
 import StyledSection from '../../styles/StyledSection';
 import HomeCommentForm from './HomeCommentForm';
 import HomeComment from './HomeComment';
@@ -39,7 +40,24 @@ const CommentCont = styled.div`
 `;
 
 export default function HomeCommentList({ postId }) {
-  const { setChatToggle, chat, data } = useContext(HomeContext);
+  const { setChatToggle, chat } = useContext(HomeContext);
+  const [comments, setComments] = useState([]);
+
+  const fetchComments = async () => {
+    const { data, error } = await supabase
+      .from('comments')
+      .select('id, comment_data, comment_created_at, user_id')
+      .eq('post_id', postId);
+    if (error) {
+      console.error(error);
+    } else {
+      setComments(data);
+    }
+  };
+
+  useEffect(() => {
+    fetchComments();
+  }, [postId]);
 
   return (
     <CommentBg>
@@ -47,11 +65,13 @@ export default function HomeCommentList({ postId }) {
         <CloseBtn type="button" onClick={() => setChatToggle(false)}>
           <IoIosClose />
         </CloseBtn>
-        <HomeCommentForm postId={postId} />
+        <HomeCommentForm postId={postId} setComments={setComments} />
         <CommentCont>
-          {chat.map((comment) => (
-            <HomeComment key={comment.id} comment={comment} />
-          ))}
+          {chat.length === 0 ? (
+            <p>🌴댓글이 없습니다</p>
+          ) : (
+            comments.map((comment) => <HomeComment key={comment.id} comment={comment} />)
+          )}
         </CommentCont>
       </StyledSection>
     </CommentBg>

@@ -1,4 +1,5 @@
 import React, { useContext, useState } from 'react';
+import { supabase } from '../../supabase/supabase';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { format, register } from 'timeago.js';
@@ -62,16 +63,26 @@ const ToggleButtonList = styled.div`
     }
   }
 `;
-export default function HomeUserProfile({ time, userNickName, userId, userProfile }) {
+export default function HomeUserProfile({ time, userNickName, userId, targetId }) {
   const [isVisible, setIsVisible] = useState(false);
-  const { handleToggle } = useContext(HomeContext);
+  const { handleToggle, data, deletePost } = useContext(HomeContext);
   const formattedTime = format(new Date(time), 'ko');
-  const handleClickDelete = () => { };
+  const user = data.find((userData) => userData.users.id === userId);
+  const profileImage = user?.users.user_profile_image || null;
+
+  const {
+    data: { publicUrl }
+  } = supabase.storage.from('avatars').getPublicUrl('profile.png');
+  const profileImageUrl = profileImage ? profileImage : publicUrl;
+
+  const handleClickDelete = () => {
+    deletePost(targetId);
+  };
 
   return (
     <ProfileWrapper>
       <ProfileImg>
-        <img src={userProfile} />
+        <img src={profileImageUrl} />
       </ProfileImg>
       <ProfileName>
         {userNickName} <span>{formattedTime}</span>
@@ -82,7 +93,7 @@ export default function HomeUserProfile({ time, userNickName, userId, userProfil
         </button>
         {isVisible && (
           <ToggleButtonList>
-            <Link to="/home/edit" state={{ userId }}>
+            <Link to="/edit" state={{ userId }}>
               수정
             </Link>
             <button type="button" onClick={handleClickDelete}>

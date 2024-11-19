@@ -5,11 +5,10 @@ import HomeCommentList from './HomeCommentList';
 
 export default function HomeList() {
   const { chatToggle, data, postId } = useContext(HomeContext);
+
   return (
     <>
-      {data.map((post) => (
-        <HomeListItem key={post.id} post={post} />
-      ))}
+      {data.length === 0 ? <p>🌴글이 없습니다</p> : data.map((post) => <HomeListItem key={post.id} post={post} />)}
       {chatToggle && <HomeCommentList postId={postId} />}
     </>
   );
