@@ -8,6 +8,7 @@ export default function HomeProvider({ children }) {
   const [chat, setChat] = useState([]);
   const [chatToggle, setChatToggle] = useState(false);
   const [postId, setPostId] = useState('');
+  const [comments, setComments] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -36,7 +37,9 @@ export default function HomeProvider({ children }) {
         postId,
         setPostId,
         chat,
-        setChat
+        setChat,
+        comments,
+        setComments
       }}
     >
       {children}

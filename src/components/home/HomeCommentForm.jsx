@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import styled from 'styled-components';
 import { supabase } from '../../supabase/supabase';
 import StyledButton from '../../styles/StyledButton';
+import { HomeContext } from '../../context/HomeProvider';
 
 const StyledForm = styled.form`
   display: flex;
@@ -22,16 +23,19 @@ const StyledForm = styled.form`
     border-radius: 5px;
   }
 `;
+
 export default function HomeCommentForm({ postId }) {
   const [comment, setComment] = useState('');
+  const { comments, setComments } = useContext(HomeContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!comment.trim()) return;
+
     try {
       const { data: user, error: userError } = await supabase.auth.getUser();
       if (userError) {
-        console.error(userError.message);
+        console.error('사용자 오류:', userError.message);
         return;
       }
       if (!user) {
@@ -43,16 +47,16 @@ export default function HomeCommentForm({ postId }) {
         {
           post_id: postId,
           comment_data: comment,
-          user_id: user.id
+          user_id: user.user.id,
         }
       ]);
 
       if (error) throw error;
 
-      setComments((prevComments) => [...prevComments, data[0]]); 
-      setComment(''); 
+      setComments((prevComments) => [...prevComments, data]);
+      setComment('');
     } catch (error) {
-      console.error(error.message);
+      console.error('댓글 추가 오류:', error.message);
     }
   };
 
@@ -68,7 +72,7 @@ export default function HomeCommentForm({ postId }) {
         value={comment}
         onChange={(e) => setComment(e.target.value)}
         placeholder="댓글 작성"
-      ></input>
+      />
       <StyledButton type="submit">댓글</StyledButton>
       <StyledButton type="button" onClick={handleCancel} color="#F4A460">
         취소

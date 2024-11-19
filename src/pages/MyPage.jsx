@@ -8,17 +8,17 @@ import { supabase } from '../supabase/supabase';
 import history from '../assets/history.png';
 
 const Container = styled.form`
-  width: 800px;
-  height: 900px;
+  width: 600px;
+  height: 700px;
   margin: 0 auto;
   padding: 20px;
   border: 1px solid #ccc;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   margin-top: 100px;
   align-items: center;
   font-family: Arial, sans-serif;
+  border-radius: 10px;
 `;
 
 const Section = styled.div`
@@ -27,8 +27,8 @@ const Section = styled.div`
 `;
 
 const ProfileImage = styled.img`
-  width: 150px;
-  height: 150px;
+  width: 130px;
+  height: 130px;
   border-radius: 50%;
   margin-bottom: 10px;
   display: flex;
@@ -43,6 +43,9 @@ const FileInputLabel = styled.img`
   width: 30px;
   height: 30px;
   background-image: url(${profileupdate});
+  position: absolute;
+  left: 52%;
+  bottom: 72%;
   background-size: cover;
   background-position: center;
   cursor: pointer;
@@ -54,21 +57,28 @@ const NicknameContainer = styled.div`
   justify-content: center;
   align-items: center;
   gap: 10px;
+  height: 50px;
 `;
 
 const Nickname = styled.h2`
-  font-size: 24px;
-  margin: 10px;
+  font-size: 20px;
+  margin: 0;
 `;
-
-const PencilIcon = styled.img`
-  width: 20px;
+const InputNickname = styled.input`
+  border-radius: 5px;
   height: 20px;
+  padding: 4px;
+`;
+const PencilIcon = styled.img`
+  width: 25px;
+  height: 25px;
   cursor: pointer;
+  margin: 0;
+  padding: 0;
 `;
 
 const Divider = styled.hr`
-  width: 800px;
+  width: 600px;
   margin: 30px 0;
   border: none;
   border-top: 1px solid #ccc;
@@ -78,7 +88,8 @@ const LikesSection = styled.div`
   display: flex;
   gap: 10px;
   align-items: center;
-  margin-left: auto;
+  margin-left: 400px;
+
   & span {
     font-size: 24px;
     color: red;
@@ -113,9 +124,12 @@ const History = styled.img`
 const StyledText = styled.div`
   font-size: 16px;
   color: #333;
-  margin-bottom: 10px;
   display: flex;
   margin-right: auto;
+  font-weight: bold;
+  position: absolute;
+  left: 35%;
+  top: 44%;
 `;
 
 const MyPage = () => {
@@ -131,6 +145,7 @@ const MyPage = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      console.log(supabase);
       try {
         setLoading(true);
         setError(null);
@@ -207,8 +222,10 @@ const MyPage = () => {
           .from('likes')
           .select('likes_count')
           .eq('user_id', user.id);
-        if (likesError) throw likesError;
-
+        if (likesError) {
+          console.error('Error fetching likes data:', likesError.message);
+          throw likesError;
+        }
         console.log('Fetched Likes Data:', likesData);
 
         const totalLikes = likesData.reduce((sum, like) => sum + like.likes_count, 0);
@@ -285,7 +302,7 @@ const MyPage = () => {
         <FileInput id="file-upload" type="file" accept="image/*" onChange={handlePofileImageChange} />
         <NicknameContainer>
           {isEditing ? (
-            <input
+            <InputNickname
               type="text"
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
@@ -304,7 +321,8 @@ const MyPage = () => {
       <LikesSection>
         <History src={hart} alt="Likes" width="30px" /> 좋아요 수
         <h2>
-          <span>{totalLikes}</span>
+          {/* <span>{totalLikes}</span> */}
+          <span>+999</span>
         </h2>
       </LikesSection>
       <PostList>

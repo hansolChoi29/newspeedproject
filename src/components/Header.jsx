@@ -9,10 +9,11 @@ const HeaderStyle = styled.div`
   top: 0;
   width: 100%; /* 가로 너비 설정 */
   height: 50px;
+  border-bottom: 1px solid black;
   display: flex; /* Flexbox 사용 */
   justify-content: space-around; /* 양쪽 끝 정렬 */
   align-items: center; /* 수직 가운데 정렬 */
-  background-color: transparent; /* (선택) 배경색 설정 */
+  background-color: #ffffff; /* (선택) 배경색 설정 */
   margin: 10px 20px;
   a {
     text-decoration: none;
@@ -31,6 +32,10 @@ const MyPageStyle = styled.div`
   display: flex;
   flex-direction: row;
 `;
+
+
+  
+
 
 function Header() {
   const [userProfile, setUserProfile] = useState({
@@ -78,13 +83,13 @@ function Header() {
 
   return (
     <HeaderStyle>
-      <Link to="/Home">
+      <Link to="/home">
         <LogoFontStyle>Voir le chemin</LogoFontStyle>
       </Link>
 
       <MyPageStyle>
         <p>{userProfile.nickname}님 안녕하세요</p>
-        <Link to="/Mypage">
+        <Link to="/mypage">
           <p>
             <img src={userProfile.user_profile_image} alt="프로필사진" />
           </p>
