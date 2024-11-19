@@ -1,6 +1,7 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import styled from 'styled-components';
 import { IoIosClose } from 'react-icons/io';
+import { supabase } from '../../supabase/supabase';
 import StyledSection from '../../styles/StyledSection';
 import HomeCommentForm from './HomeCommentForm';
 import HomeComment from './HomeComment';
@@ -26,6 +27,7 @@ const CommentBg = styled.div`
     background: #fff;
   }
 `;
+
 const CloseBtn = styled.button`
   position: absolute;
   top: 10px;
@@ -36,10 +38,53 @@ const CloseBtn = styled.button`
 
 const CommentCont = styled.div`
   padding: 20px;
+  height: 400px;
+  overflow: auto;
 `;
 
 export default function HomeCommentList({ postId }) {
-  const { setChatToggle, chat, data } = useContext(HomeContext);
+  const { setChatToggle, comments, setComments } = useContext(HomeContext);
+
+  const fetchComments = async () => {
+    if (!postId) return;
+    const { data, error } = await supabase
+      .from('comments')
+      .select('id, comment_data, comment_created_at, user_id')
+      .eq('post_id', postId);
+
+    if (error) {
+      console.error(error);
+    } else {
+      setComments(data);
+    }
+  };
+
+  const updateComment = async (commentId, newCommentData) => {
+    try {
+      const { data, error } = await supabase
+        .from('comments')
+        .update({ comment_data: newCommentData })
+        .eq('id', commentId);
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      setComments((prevComments) =>
+        prevComments.map((comment) =>
+          comment.id === commentId ? { ...comment, comment_data: newCommentData } : comment
+        )
+      );
+    } catch (error) {
+      console.error('댓글 수정 오류:', error.message);
+    }
+  };
+  useEffect(() => {
+    if (postId) {
+      fetchComments();
+    }
+  }, [comments]);
 
   return (
     <CommentBg>
@@ -49,9 +94,22 @@ export default function HomeCommentList({ postId }) {
         </CloseBtn>
         <HomeCommentForm postId={postId} />
         <CommentCont>
-          {chat.map((comment) => (
-            <HomeComment key={comment.id} comment={comment} />
-          ))}
+          {Array.isArray(comments) && comments.length === 0 ? (
+            <p>🌴댓글이 없습니다</p>
+          ) : (
+            Array.isArray(comments) &&
+            comments
+              .filter((comment) => comment && comment.comment_created_at)
+              .sort((a, b) => new Date(b.comment_created_at) - new Date(a.comment_created_at))
+              .map((comment) => (
+                <HomeComment
+                  key={comment.id}
+                  comment={comment}
+                  setComments={setComments}
+                  updateComment={updateComment}
+                />
+              ))
+          )}
         </CommentCont>
       </StyledSection>
     </CommentBg>
