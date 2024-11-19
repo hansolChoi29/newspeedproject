@@ -1,4 +1,6 @@
 import styled from 'styled-components';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import HomeProvider from '../context/HomeProvider';
 import StyledSection from '../styles/StyledSection';
 import HomeList from '../components/home/HomeList';
@@ -20,6 +22,7 @@ function Home() {
     <HomeProvider>
       <StyledHomeCont>
         <StyledSection>
+          <ToastContainer />
           <HomeList />
         </StyledSection>
       </StyledHomeCont>

@@ -1,4 +1,5 @@
 import React, { useState, useContext } from 'react';
+import { toast } from 'react-toastify';
 import styled from 'styled-components';
 import { supabase } from '../../supabase/supabase';
 import StyledButton from '../../styles/StyledButton';
@@ -39,7 +40,7 @@ export default function HomeCommentForm({ postId }) {
         return;
       }
       if (!user) {
-        alert('로그인 후 댓글을 작성해주세요.');
+        toast.error('로그인 후 댓글을 작성해주세요.');
         return;
       }
 
@@ -74,7 +75,7 @@ export default function HomeCommentForm({ postId }) {
         placeholder="댓글 작성"
       />
       <StyledButton type="submit">댓글</StyledButton>
-      <StyledButton type="button" onClick={handleCancel}>
+      <StyledButton type="button" onClick={handleCancel} color="#F4A460">
         취소
       </StyledButton>
     </StyledForm>
