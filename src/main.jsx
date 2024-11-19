@@ -19,9 +19,11 @@ createRoot(document.getElementById('root')).render(
       <Route path="/resetpassword" element={<ResetPassword />} />
       <Route path="/findpassword" element={<FindPassword />} />
       <Route path="/*" element={<App />}>
+        <Route path="find" element={<Home />} />
         <Route path="home" element={<Home />} />
         <Route path="mypage" element={<MyPage />} />
-        <Route path="home/create" element={<CreatePost />} />
+        <Route path="edit" element={<CreatePost />} />
+        <Route path="create" element={<CreatePost />} />
       </Route>
     </Routes>
   </BrowserRouter>

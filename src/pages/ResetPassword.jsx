@@ -3,7 +3,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import { supabase } from '../supabase/supabase';
 import styled from 'styled-components';
-import 'react-toastify/dist/ReactToastify.css';
+
+import StyledButton from '../styles/StyledButton';
 
 const ResetPassword = () => {
   const [newpassword, setNewPassword] = useState('');
@@ -85,27 +86,51 @@ const ResetPassword = () => {
   return (
     <div>
       <ToastContainer />
+      <BackgroundColor />
       <PasswordCord>
-        <label>변경할 패스워드</label>
-        <input
-          value={newpassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-          type="password"
-          placeholder="변경하실 패스워드를 입력해주세요"
-        ></input>
-        <label>패스워드 확인</label>
-        <input
-          value={confimPassword}
-          onChange={(e) => setConfimPassword(e.target.value)}
-          type="password"
-          placeholder="변경할 패스워드가 맞는지 확인해주세요"
-        ></input>
-        <button onClick={handlePasswordChange}>패스워드 변경하기</button>
-        <button onClick={goLogin}>로그인 하러가기</button>
+        <ResetCardInput>
+          <label>변경할 패스워드</label>
+          <input
+            value={newpassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            type="password"
+            placeholder="변경하실 패스워드를 입력해주세요"
+          ></input>
+          <label>패스워드 확인</label>
+          <input
+            value={confimPassword}
+            onChange={(e) => setConfimPassword(e.target.value)}
+            type="password"
+            placeholder="변경할 패스워드가 맞는지 확인해주세요"
+          ></input>
+        </ResetCardInput>
+        <StyledButton style={{ height: '60px', width: '300px', marginTop: '-50px' }} onClick={handlePasswordChange}>
+          패스워드 변경하기
+        </StyledButton>
+        <StyledButton
+          style={{ height: '60px', width: '300px', backgroundColor: '#F4A460', marginTop: '20px' }}
+          onClick={goLogin}
+        >
+          로그인 하러가기
+        </StyledButton>
       </PasswordCord>
     </div>
   );
 };
+
+const ResetCardInput = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 200px;
+  & input {
+    text-align: center;
+    width: 275px;
+    height: 50px;
+    margin: 15px;
+  }
+`;
 
 const PasswordCord = styled.div`
   display: flex;
@@ -119,6 +144,11 @@ const PasswordCord = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+`;
+
+const BackgroundColor = styled.div`
+  height: 100vh;
+  background-image: linear-gradient(to right top, #87ceeb, #96dce0, #b4e6d6, #d7eed4, #f5f5dc);
 `;
 
 export default ResetPassword;
