@@ -74,7 +74,7 @@ export default function HomeCommentForm({ postId }) {
         placeholder="댓글 작성"
       />
       <StyledButton type="submit">댓글</StyledButton>
-      <StyledButton type="button" onClick={handleCancel}>
+      <StyledButton type="button" onClick={handleCancel} color="#F4A460">
         취소
       </StyledButton>
     </StyledForm>

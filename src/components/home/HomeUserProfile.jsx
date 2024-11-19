@@ -25,6 +25,7 @@ const ProfileImg = styled.div`
     object-fit: contain;
   }
 `;
+
 const ProfileName = styled.p`
   font-weight: 700;
   span {
@@ -33,6 +34,7 @@ const ProfileName = styled.p`
     font-weight: 400;
   }
 `;
+
 const ProfileToggle = styled.div`
   position: relative;
   margin-left: auto;
@@ -43,6 +45,7 @@ const ProfileToggle = styled.div`
     background: none;
   }
 `;
+
 const ToggleButtonList = styled.div`
   position: absolute;
   right: 0;
@@ -63,6 +66,7 @@ const ToggleButtonList = styled.div`
     }
   }
 `;
+
 export default function HomeUserProfile({ time, userNickName, userId, targetId }) {
   const [isVisible, setIsVisible] = useState(false);
   const { data, setData } = useContext(HomeContext);
@@ -71,7 +75,8 @@ export default function HomeUserProfile({ time, userNickName, userId, targetId }
   const profileImage = user?.users.user_profile_image || null;
 
   const { data: publicUrlData } = supabase.storage.from('avatars').getPublicUrl('profile.png');
-  const profileImageUrl = profileImage ? profileImage : publicUrlData?.publicUrl || '';
+  const imgUrl = publicUrlData.publicUrl;
+  const profileImageUrl = profileImage ? imgUrl : publicUrlData?.publicUrl || '';
 
   const deletePost = async (postId) => {
     const { error } = await supabase.from('posts').delete().eq('id', postId);
@@ -81,6 +86,7 @@ export default function HomeUserProfile({ time, userNickName, userId, targetId }
       setData((prevData) => prevData.filter((post) => post.id !== postId));
     }
   };
+
   const handleClickDelete = () => {
     deletePost(targetId);
   };
@@ -88,7 +94,7 @@ export default function HomeUserProfile({ time, userNickName, userId, targetId }
   return (
     <ProfileWrapper>
       <ProfileImg>
-        <img src={profileImageUrl} />
+        <img src={profileImageUrl} alt="Profile" />
       </ProfileImg>
       <ProfileName>
         {userNickName} <span>{formattedTime}</span>

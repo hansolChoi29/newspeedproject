@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import StyledButton from '../../styles/StyledButton';
 import { supabase } from '../../supabase/supabase';
+import { FaPen, FaRegTrashAlt } from 'react-icons/fa';
+import HomeUserProfile from './HomeUserProfile';
 
 const CommentWrapper = styled.div`
   display: flex;
@@ -12,10 +14,6 @@ const CommentWrapper = styled.div`
 `;
 
 const CommentContent = styled.div`
-  flex: 1;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   input {
     padding: 5px;
     width: calc(100% - 30px);
@@ -40,9 +38,42 @@ const ButtonGroup = styled.div`
   }
 `;
 
+const CommentEditBtn = styled.button`
+  font-size: 1.25rem;
+  background: none;
+`;
+
 export default function HomeComment({ comment, updateComment, setComments }) {
   const [isEditing, setIsEditing] = useState(false);
   const [newCommentData, setNewCommentData] = useState(comment.comment_data);
+  const [userProfile, setUserProfile] = useState({});
+
+  // 댓글 작성자의 프로필 정보를 가져오는 함수
+  const fetchUserProfile = async (userId) => {
+    try {
+      const { data, error } = await supabase
+        .from('users') // 'users' 테이블에서 사용자 정보를 가져옵니다.
+        .select('user_nick_name, user_profile_image')
+        .eq('id', userId)
+        .single();
+
+      if (error) {
+        console.error('사용자 정보 조회 오류:', error.message);
+        return;
+      }
+
+      setUserProfile(data); // 사용자 정보를 상태에 저장
+    } catch (error) {
+      console.error('사용자 정보 조회 오류:', error.message);
+    }
+  };
+
+  useEffect(() => {
+    // 댓글 작성자의 프로필 정보 가져오기
+    if (comment.user_id) {
+      fetchUserProfile(comment.user_id);
+    }
+  }, [comment.user_id]);
 
   const handleEditClick = () => {
     setIsEditing(true);
@@ -95,22 +126,33 @@ export default function HomeComment({ comment, updateComment, setComments }) {
             />
           </>
         ) : (
-          <CommentText>{comment.comment_data}</CommentText>
+          <>
+            <HomeUserProfile
+              userNickName={userProfile.user_nick_name} // 사용자 닉네임
+              profileImage={userProfile.user_profile_image} // 사용자 프로필 이미지
+              time={comment.comment_created_at}
+              userId={comment.user_id}
+            />
+            <CommentText>{comment.comment_data}</CommentText>
+          </>
         )}
       </CommentContent>
-
       <ButtonGroup>
         {isEditing ? (
           <>
             <StyledButton onClick={handleSaveEdit}>저장</StyledButton>
-            <StyledButton onClick={handleCancelEdit}>취소</StyledButton>
+            <StyledButton onClick={handleCancelEdit} color="#F4A460">
+              취소
+            </StyledButton>
           </>
         ) : (
           <>
-            <StyledButton onClick={handleEditClick}>수정</StyledButton>
-            <StyledButton onClick={handleDeleteClick} color="#F4A460">
-              삭제
-            </StyledButton>
+            <CommentEditBtn onClick={handleEditClick}>
+              <FaPen />
+            </CommentEditBtn>
+            <CommentEditBtn onClick={handleDeleteClick}>
+              <FaRegTrashAlt />
+            </CommentEditBtn>
           </>
         )}
       </ButtonGroup>
