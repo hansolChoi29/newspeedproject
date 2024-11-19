@@ -9,16 +9,16 @@ import history from '../assets/history.png';
 
 const Container = styled.form`
   width: 600px;
-  height: 800px;
+  height: 700px;
   margin: 0 auto;
   padding: 20px;
   border: 1px solid #ccc;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   margin-top: 100px;
   align-items: center;
   font-family: Arial, sans-serif;
+  border-radius: 10px;
 `;
 
 const Section = styled.div`
@@ -27,8 +27,8 @@ const Section = styled.div`
 `;
 
 const ProfileImage = styled.img`
-  width: 150px;
-  height: 150px;
+  width: 130px;
+  height: 130px;
   border-radius: 50%;
   margin-bottom: 10px;
   display: flex;
@@ -43,6 +43,9 @@ const FileInputLabel = styled.img`
   width: 30px;
   height: 30px;
   background-image: url(${profileupdate});
+  position: absolute;
+  right: 390px;
+  bottom: 660px;
   background-size: cover;
   background-position: center;
   cursor: pointer;
@@ -54,11 +57,11 @@ const NicknameContainer = styled.div`
   justify-content: center;
   align-items: center;
   gap: 10px;
-  height: 100px;
+  height: 50px;
 `;
 
 const Nickname = styled.h2`
-  font-size: 24px;
+  font-size: 20px;
   margin: 10px;
 `;
 
@@ -164,7 +167,7 @@ const MyPage = () => {
         const user = session?.user; // 로그인된 사용자 정보 가져오기
         if (!user) {
           console.warn('No user logged in.');
-          // setNickname('닉네임 없음');
+          setNickname('닉네임 없음');
           setPofileImage(myprofile);
           return;
         }
@@ -210,8 +213,10 @@ const MyPage = () => {
           .from('likes')
           .select('likes_count')
           .eq('user_id', user.id);
-        if (likesError) throw likesError;
-
+        if (likesError) {
+          console.error('Error fetching likes data:', likesError.message);
+          throw likesError;
+        }
         console.log('Fetched Likes Data:', likesData);
 
         const totalLikes = likesData.reduce((sum, like) => sum + like.likes_count, 0);
