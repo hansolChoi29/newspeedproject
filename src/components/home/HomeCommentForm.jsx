@@ -25,12 +25,12 @@ const StyledForm = styled.form`
 `;
 
 export default function HomeCommentForm({ postId }) {
-  const [comment, setComment] = useState('');
-  const { comments, setComments } = useContext(HomeContext);
+  const [commentValue, setCommentValue] = useState('');
+  const { setComments } = useContext(HomeContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!comment.trim()) return;
+    if (!commentValue.trim()) return;
 
     try {
       const { data: user, error: userError } = await supabase.auth.getUser();
@@ -46,22 +46,22 @@ export default function HomeCommentForm({ postId }) {
       const { data, error } = await supabase.from('comments').insert([
         {
           post_id: postId,
-          comment_data: comment,
-          user_id: user.user.id,
+          comment_data: commentValue,
+          user_id: user.user.id
         }
       ]);
 
       if (error) throw error;
 
       setComments((prevComments) => [...prevComments, data]);
-      setComment('');
+      setCommentValue('');
     } catch (error) {
       console.error('댓글 추가 오류:', error.message);
     }
   };
 
   const handleCancel = () => {
-    setComment('');
+    setCommentValue('');
   };
 
   return (
@@ -69,12 +69,12 @@ export default function HomeCommentForm({ postId }) {
       <input
         type="text"
         name="comment"
-        value={comment}
-        onChange={(e) => setComment(e.target.value)}
+        value={commentValue}
+        onChange={(e) => setCommentValue(e.target.value)}
         placeholder="댓글 작성"
       />
       <StyledButton type="submit">댓글</StyledButton>
-      <StyledButton type="button" onClick={handleCancel} color="#F4A460">
+      <StyledButton type="button" onClick={handleCancel}>
         취소
       </StyledButton>
     </StyledForm>

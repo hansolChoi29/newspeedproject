@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import styled from 'styled-components';
 import { IoIosClose } from 'react-icons/io';
 import { supabase } from '../../supabase/supabase';
@@ -38,6 +38,8 @@ const CloseBtn = styled.button`
 
 const CommentCont = styled.div`
   padding: 20px;
+  height: 400px;
+  overflow: auto;
 `;
 
 export default function HomeCommentList({ postId }) {
@@ -78,12 +80,11 @@ export default function HomeCommentList({ postId }) {
       console.error('댓글 수정 오류:', error.message);
     }
   };
-
   useEffect(() => {
     if (postId) {
       fetchComments();
     }
-  }, [postId]);
+  }, [comments]);
 
   return (
     <CommentBg>
@@ -93,10 +94,12 @@ export default function HomeCommentList({ postId }) {
         </CloseBtn>
         <HomeCommentForm postId={postId} />
         <CommentCont>
-          {comments.length === 0 ? (
+          {Array.isArray(comments) && comments.length === 0 ? (
             <p>🌴댓글이 없습니다</p>
           ) : (
+            Array.isArray(comments) &&
             comments
+              .filter((comment) => comment && comment.comment_created_at)
               .sort((a, b) => new Date(b.comment_created_at) - new Date(a.comment_created_at))
               .map((comment) => (
                 <HomeComment

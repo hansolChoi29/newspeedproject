@@ -22,8 +22,8 @@ createRoot(document.getElementById('root')).render(
         <Route path="find" element={<Home />} />
         <Route path="home" element={<Home />} />
         <Route path="mypage" element={<MyPage />} />
-        <Route path="edit" element={<CreatePost />} />
-        <Route path="create" element={<CreatePost />} />
+        <Route path="post" element={<CreatePost />} />
+        <Route path="post/:id" element={<CreatePost />} />
       </Route>
     </Routes>
   </BrowserRouter>

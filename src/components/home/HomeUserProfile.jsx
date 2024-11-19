@@ -70,10 +70,8 @@ export default function HomeUserProfile({ time, userNickName, userId, targetId }
   const user = data.find((userData) => userData.users.id === userId);
   const profileImage = user?.users.user_profile_image || null;
 
-  const {
-    data: { publicUrl }
-  } = supabase.storage.from('avatars').getPublicUrl('profile.png');
-  const profileImageUrl = profileImage ? profileImage : publicUrl;
+  const { data: publicUrlData } = supabase.storage.from('avatars').getPublicUrl('profile.png');
+  const profileImageUrl = profileImage ? profileImage : publicUrlData?.publicUrl || '';
 
   const deletePost = async (postId) => {
     const { error } = await supabase.from('posts').delete().eq('id', postId);
@@ -101,7 +99,7 @@ export default function HomeUserProfile({ time, userNickName, userId, targetId }
         </button>
         {isVisible && (
           <ToggleButtonList>
-            <Link to="/edit" state={{ userId }}>
+            <Link to={`/post/${targetId}`} state={{ targetId }}>
               수정
             </Link>
             <button type="button" onClick={handleClickDelete}>

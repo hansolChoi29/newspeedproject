@@ -16,6 +16,12 @@ const CommentContent = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  input {
+    padding: 5px;
+    width: calc(100% - 30px);
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
 `;
 
 const CommentText = styled.p`
@@ -29,6 +35,9 @@ const ButtonGroup = styled.div`
   display: flex;
   gap: 10px;
   align-items: center;
+  button {
+    padding: 5px 10px;
+  }
 `;
 
 export default function HomeComment({ comment, updateComment, setComments }) {
@@ -58,16 +67,14 @@ export default function HomeComment({ comment, updateComment, setComments }) {
   const handleDeleteClick = async () => {
     if (window.confirm('정말로 이 댓글을 삭제하시겠습니까?')) {
       try {
-        const { error } = await supabase.from('comments').delete().eq('id', comment.id); 
+        const { error } = await supabase.from('comments').delete().eq('id', comment.id);
 
         if (error) {
           console.error('댓글 삭제 오류:', error.message);
           return;
         }
 
-        setComments(
-          (prevComments) => prevComments.filter((c) => c.id !== comment.id)
-        );
+        setComments((prevComments) => prevComments.filter((c) => c.id !== comment.id));
       } catch (error) {
         console.error('댓글 삭제 오류:', error.message);
       }
@@ -96,9 +103,7 @@ export default function HomeComment({ comment, updateComment, setComments }) {
         {isEditing ? (
           <>
             <StyledButton onClick={handleSaveEdit}>저장</StyledButton>
-            <StyledButton onClick={handleCancelEdit} color="#F4A460">
-              취소
-            </StyledButton>
+            <StyledButton onClick={handleCancelEdit}>취소</StyledButton>
           </>
         ) : (
           <>
