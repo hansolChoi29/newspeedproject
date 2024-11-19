@@ -1,7 +1,15 @@
-import { Reset } from 'styled-reset';
+import { Outlet } from 'react-router-dom';
+import Header from './components/Header';
+import Footer from './components/Footer';
 
 function App() {
-  return <>{/* <Reset /> */}</>;
+  return (
+    <>
+      <Header />
+      <Outlet />
+      <Footer />
+    </>
+  );
 }
-//튜터님한테 app물어보기
+
 export default App;

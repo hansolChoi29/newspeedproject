@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const LogoFontStyle = styled.div`
+const LogoFontStyle = styled.h1`
   font-family: 'Dancing Script', cursive !important;
   font-weight: ${(props) => props.weight || 400};
   font-size: ${(props) => props.size || '1.5rem'};
