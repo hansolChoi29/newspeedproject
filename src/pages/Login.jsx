@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 import LogoFontStyle from '../components/FontStyle';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
