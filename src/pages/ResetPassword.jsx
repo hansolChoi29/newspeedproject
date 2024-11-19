@@ -3,7 +3,6 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import { supabase } from '../supabase/supabase';
 import styled from 'styled-components';
-
 import StyledButton from '../styles/StyledButton';
 
 const ResetPassword = () => {

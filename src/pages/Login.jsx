@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import PalmtreeImg from '../image/LoginPalmtreeImg.png';
 import whaleImg from '../image/LoginWhaleImg.png';
 import StyledButton from '../styles/StyledButton';
-import StyledSection from '../styles/StyledSection';
 import { supabase } from '../supabase/supabase';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -69,6 +68,12 @@ const LoginWhaleImg = styled.img`
 
 const BackgroundColor = styled.div`
   background-image: linear-gradient(to right top, #87ceeb, #96dce0, #b4e6d6, #d7eed4, #f5f5dc);
+`;
+
+const StyledSection = styled.div`
+  height: 630px;
+  width: 450px;
+  background-color: white;
 `;
 
 function Login() {
