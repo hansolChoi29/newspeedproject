@@ -62,7 +62,6 @@ const ResetPassword = () => {
       return;
     }
     try {
-      console.log(newpassword);
       const { error } = await supabase.auth.updateUser({
         password: newpassword
       });
@@ -86,24 +85,40 @@ const ResetPassword = () => {
   return (
     <div>
       <ToastContainer />
-      <label>변경할 패스워드</label>
-      <input
-        value={newpassword}
-        onChange={(e) => setNewPassword(e.target.value)}
-        type="password"
-        placeholder="변경하실 패스워드를 입력해주세요"
-      ></input>
-      <label>패스워드 확인</label>
-      <input
-        value={confimPassword}
-        onChange={(e) => setConfimPassword(e.target.value)}
-        type="password"
-        placeholder="변경할 패스워드가 맞는지 확인해주세요"
-      ></input>
-      <button onClick={handlePasswordChange}>패스워드 변경하기</button>
-      <button onClick={goLogin}>로그인 하러가기</button>
+      <PasswordCord>
+        <label>변경할 패스워드</label>
+        <input
+          value={newpassword}
+          onChange={(e) => setNewPassword(e.target.value)}
+          type="password"
+          placeholder="변경하실 패스워드를 입력해주세요"
+        ></input>
+        <label>패스워드 확인</label>
+        <input
+          value={confimPassword}
+          onChange={(e) => setConfimPassword(e.target.value)}
+          type="password"
+          placeholder="변경할 패스워드가 맞는지 확인해주세요"
+        ></input>
+        <button onClick={handlePasswordChange}>패스워드 변경하기</button>
+        <button onClick={goLogin}>로그인 하러가기</button>
+      </PasswordCord>
     </div>
   );
 };
+
+const PasswordCord = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 630px;
+  width: 450px;
+  background-color: white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+`;
 
 export default ResetPassword;
