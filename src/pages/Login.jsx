@@ -14,8 +14,6 @@ const LoginCard = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-
-  /* height: 100%; */
   section {
     background-color: white;
     box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.3);
@@ -40,12 +38,6 @@ const LoginPasswoardStyle = styled.form`
     margin-top: -20px;
   }
 `;
-
-// const Label = styled.label`
-//   display: block;
-//   margin-top: 10px;
-//   font-size: 13px;
-// `;
 
 const P = styled.p`
   align-items: end;
