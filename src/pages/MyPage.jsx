@@ -127,13 +127,10 @@ const StyledText = styled.div`
   display: flex;
   margin-right: auto;
   font-weight: bold;
-  position: absolute;
-  left: 35%;
-  top: 44%;
 `;
 
 const MyPage = () => {
-  const [profileImage, setPofileImage] = useState(myprofile);
+  const [profileImage, setProfileImage] = useState(myprofile);
   const [nickname, setNickname] = useState('');
   const [posts, setPosts] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
@@ -146,87 +143,54 @@ const MyPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       console.log(supabase);
+
       try {
         setLoading(true);
         setError(null);
 
         // 로그인 상태 확인 (주석 처리 유지)
-        // const {
-        //   data: { session },
-        //   error: sessionError,
-        // } = await supabase.auth.getSession();
-        // if (sessionError) throw sessionError;
-
-        // const user = session?.user;
-        // if (!user) throw new Error('User is not logged in');
-
-        // 테스트용 고정 user_id
-
-        // 1. 유저 데이터 가져오기
         const {
           data: { session },
           error: sessionError
         } = await supabase.auth.getSession();
 
-        if (sessionError) {
-          console.error('Error fetching session:', sessionError.message);
-          throw sessionError;
-        }
+        if (sessionError) throw sessionError;
 
-        const user = session?.user; // 로그인된 사용자 정보 가져오기
-        if (!user) {
-          console.warn('No user logged in.');
-          setNickname('닉네임 없음');
-          setPofileImage(myprofile);
-          return;
-        }
-
-        console.log('Logged-in User:', user);
+        const user = session?.user;
+        if (!user) throw new Error('User is not logged in');
 
         // 1. 유저 데이터 가져오기
         const { data: userData, error: userError } = await supabase
           .from('users')
-          .select('user_pofile_image, user_nick_name') // 정확한 컬럼 이름 확인 필요
+          .select('user_profile_image, user_nick_name') // 정확한 컬럼 이름 확인 필요
           .eq('id', user.id)
           .single();
 
-        console.log('Fetched User Data:', userData);
-        if (userError) {
-          console.error('Error fetching user data:', userError.message);
-          throw userError;
-        }
+        if (userError) throw userError;
 
-        if (userData) {
-          const pofileImage = userData.user_pofile_image || myprofile; // 기본값 처리
-          const nickname = userData.user_nick_name || '닉네임 없음'; // 기본값 처리
+        // console.log('Fetched User Data:', userData);
 
-          setPofileImage(pofileImage); // 상태 업데이트
-          setNickname(nickname); // 상태 업데이트
-        } else {
-          console.warn('No user data found for the logged-in user.');
-          setNickname('닉네임 없음');
-          setPofileImage(myprofile);
-        }
-
+        setProfileImage(userData.user_profile_image || myprofile); // 이미지가 없으면 기본 이미지로 설정
+        setNickname(userData.user_nick_name || '닉네임 없음'); // 닉네임이 없으면 기본값 설정
         // 2. 게시글 데이터 가져오기
         const { data: postsData, error: postsError } = await supabase
           .from('posts')
           .select('post_contents')
           .eq('user_id', user.id);
-        if (postsError) throw postsError;
 
-        console.log('Fetched Posts Data:', postsData);
+        if (postsError) throw postsError;
+        // 상태 업데이트: 게시글 데이터 설정
+        setPosts(postsData);
+        // console.log('Fetched Posts Data:', postsData);
 
         // 3. 좋아요 데이터 가져오기
         const { data: likesData, error: likesError } = await supabase
           .from('likes')
           .select('likes_count')
           .eq('user_id', user.id);
-        if (likesError) {
-          console.error('Error fetching likes data:', likesError.message);
-          throw likesError;
-        }
-        console.log('Fetched Likes Data:', likesData);
+
+        if (likesError) throw likesError;
+        // console.log('Fetched Likes Data:', likesData);
 
         const totalLikes = likesData.reduce((sum, like) => sum + like.likes_count, 0);
 
@@ -246,45 +210,98 @@ const MyPage = () => {
 
   const handleNicknameSave = async () => {
     try {
-      const user = supabase.auth.user();
-      if (!user) throw new Error('User is not logged in');
+      // Supabase 세션 가져오기
+      const {
+        data: { session }
+      } = await supabase.auth.getSession();
 
-      const { error } = await supabase.from('users').update({ user_nick_name: nickname }).eq('id', user.id);
+      // 세션에서 로그인된 사용자 정보 가져오기
+      const user = session?.user;
+      if (!user) throw new Error('User is not logged in.'); // 로그인이 안 된 경우 예외 발생
+
+      // 'users' 테이블에 닉네임 업데이트
+      const { error } = await supabase
+        .from('users') // 'users' 테이블에서
+        .update({ user_nick_name: nickname }) // 닉네임 업데이트
+        .eq('id', user.id); // 로그인된 사용자의 ID와 일치하는 행 선택
+
+      // 업데이트 중 에러가 발생했을 경우 처리
       if (error) throw error;
 
+      // 수정 상태 종료
       setIsEditing(false);
       alert('닉네임이 저장되었습니다.');
     } catch (err) {
+      // 에러 발생 시 에러 메시지 상태로 설정
       setError(err.message);
     }
   };
 
-  const handlePofileImageChange = async (e) => {
+  const handleProfileImageChange = async (e) => {
     const file = e.target.files[0];
-    if (!file) return;
+    if (!file) {
+      alert('파일을 선택해주세요.');
+      return;
+    }
 
     try {
-      const user = supabase.auth.user();
-      if (!user) throw new Error('User is not logged in');
+      // 세션 가져오기
+      const {
+        data: { session }
+      } = await supabase.auth.getSession();
+      console.log(session);
+      const user = session?.user;
+      if (!user) throw new Error('User is not logged in.');
 
-      const fileName = `${user.id}_${Date.now()}`;
-      const { data, error: uploadError } = await supabase.storage.from('avatars').upload(fileName, file);
+      // 파일 업로드
+      const fileName = `${user.id}_${Date.now()}_${file.name}`;
+      const { data: uploadedFile, error: uploadError } = await supabase.storage.from('avatars').upload(fileName, file);
+      console.log(uploadedFile);
+      if (uploadError) {
+        console.error('Upload Error:', uploadError.message);
+        alert('파일 업로드에 실패했습니다.');
+        return;
+      }
 
-      if (uploadError) throw uploadError;
+      console.log('Uploaded File Data:', uploadedFile);
 
-      const { publicURL, error: urlError } = supabase.storage.from('avatars').getPublicUrl(data.path);
+      // 👉 여기서 fullFilePath 생성
+      const fullFilePath = `${uploadedFile.path}`;
+      console.log('Full File Path:', fullFilePath);
 
-      if (urlError) throw urlError;
+      // 👉 Public URL 생성
+      const { data: publicURL, error: urlError } = supabase.storage.from('avatars').getPublicUrl(fullFilePath);
+      console.log(publicURL);
+      // 👉 Public URL 검증
+      if (urlError) {
+        console.error('URL Error:', urlError.message);
+        alert('Public URL 생성에 실패했습니다.');
+        return;
+      } else if (!publicURL) {
+        console.error('Public URL is undefined');
+        alert('공개 URL이 생성되지 않았습니다.');
+        return;
+      }
 
+      console.log('Generated Public URL:', publicURL);
+
+      // DB 업데이트
       const { error: updateError } = await supabase
         .from('users')
-        .update({ user_pofile_image: publicURL })
+        .update({ user_profile_image: publicURL })
         .eq('id', user.id);
-      if (updateError) throw updateError;
 
-      setPofileImage(publicURL); // 수정된 상태 업데이트
-      alert('프로필 이미지가 저장되었습니다.');
+      if (updateError) {
+        console.error('DB Update Error:', updateError.message);
+        alert('프로필 이미지 업데이트에 실패했습니다.');
+        return;
+      }
+
+      // 상태 업데이트
+      setProfileImage(publicURL);
+      alert('프로필 이미지가 성공적으로 저장되었습니다.');
     } catch (err) {
+      console.error('Error in handleProfileImageChange:', err.message);
       setError(err.message);
     }
   };
@@ -299,7 +316,7 @@ const MyPage = () => {
       <Section>
         <ProfileImage src={profileImage} alt="Profile" />
         <FileInputLabel as="label" htmlFor="file-upload" />
-        <FileInput id="file-upload" type="file" accept="image/*" onChange={handlePofileImageChange} />
+        <FileInput id="file-upload" type="file" accept="image/*" onChange={handleProfileImageChange} />
         <NicknameContainer>
           {isEditing ? (
             <InputNickname
@@ -321,8 +338,7 @@ const MyPage = () => {
       <LikesSection>
         <History src={hart} alt="Likes" width="30px" /> 좋아요 수
         <h2>
-          {/* <span>{totalLikes}</span> */}
-          <span>+999</span>
+          <span>{totalLikes}</span>
         </h2>
       </LikesSection>
       <PostList>
