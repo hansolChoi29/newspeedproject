@@ -44,8 +44,8 @@ const FileInputLabel = styled.img`
   height: 30px;
   background-image: url(${profileupdate});
   position: absolute;
-  left: 52%;
-  bottom: 72%;
+  left: 56%;
+  bottom: 70%;
   background-size: cover;
   background-position: center;
   cursor: pointer;
@@ -137,13 +137,13 @@ const MyPage = () => {
   const [totalLikes, setTotalLikes] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [inputNickname, setInputNickname] = useState(''); // 입력 필드 상태
+  const [postNickname, setPostNickname] = useState(''); // 게시글에서 보여지는 닉네임
 
   const nicknameInputRef = useRef(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log(supabase);
-
       try {
         setLoading(true);
         setError(null);
@@ -171,8 +171,8 @@ const MyPage = () => {
         // console.log('Fetched User Data:', userData);
         const profileimgUrl = JSON.parse(userData.user_profile_image);
         setProfileImage(profileimgUrl.publicUrl || myprofile); // 이미지가 없으면 기본 이미지로 설정
-        console.log(profileimgUrl.publicUrl);
         setNickname(userData.user_nick_name || '닉네임 없음'); // 닉네임이 없으면 기본값 설정
+        setPostNickname(userData.user_nick_name || '닉네임 없음');
         // 2. 게시글 데이터 가져오기
         const { data: postsData, error: postsError } = await supabase
           .from('posts')
@@ -228,7 +228,7 @@ const MyPage = () => {
 
       // 업데이트 중 에러가 발생했을 경우 처리
       if (error) throw error;
-
+      setPostNickname(nickname); // 닉네임 변경 후 게시글 닉네임 업데이트
       // 수정 상태 종료
       setIsEditing(false);
       alert('닉네임이 저장되었습니다.');
@@ -351,7 +351,7 @@ const MyPage = () => {
         </StyledText>
         {posts.slice(0, 3).map((post, index) => (
           <Post key={index}>
-            <PostAuthor>{nickname}</PostAuthor>
+            <PostAuthor>{postNickname}</PostAuthor>
             <div>{post.post_contents}</div>
           </Post>
         ))}
