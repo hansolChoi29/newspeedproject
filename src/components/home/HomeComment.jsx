@@ -5,6 +5,7 @@ import { supabase } from '../../supabase/supabase';
 import { FaPen, FaRegTrashAlt } from 'react-icons/fa';
 import { RiEditLine, RiCloseLargeFill } from 'react-icons/ri';
 import HomeUserProfile from './HomeUserProfile';
+import Swal from 'sweetalert2';
 
 const CommentWrapper = styled.form`
   position: relative;
@@ -126,23 +127,25 @@ export default function HomeComment({ comment, setCommentsData }) {
   };
 
   const handleDeleteClick = async () => {
-    const confirmDelete = confirm('정말로 이 댓글을 삭제하시겠습니까?');
+    Swal.fire({
+      icon: 'warning',
+      text: '정말로 이 댓글을 삭제하시겠습니까? ',
+      showCancelButton: true,
+      confirmButtonText: '확인',
+      cancelButtonText: '취소'
+    }).then(async(result) => {
+      if (result.value) {
+        setCommentsData((prevComments) => prevComments.filter((c) => c.id !== comment.id));
 
-    if (confirmDelete) {
-      try {
+        //toast.success('댓글이 삭제되었습니다.');
         const { error } = await supabase.from('comments').delete().eq('id', comment.id);
         if (error) {
           toast.error('댓글 삭제 오류: ' + error.message);
           return;
         }
-
-        toast.success('댓글이 삭제되었습니다.');
-
-        setCommentsData((prevComments) => prevComments.filter((c) => c.id !== comment.id));
-      } catch (error) {
-        console.error('댓글 삭제 오류:', error.message);
+      } else {
       }
-    }
+    });
   };
 
   return (
