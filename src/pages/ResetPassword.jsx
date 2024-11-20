@@ -45,8 +45,16 @@ const ResetPassword = () => {
   }, [accessToken, navigate]);
 
   const validPassword = (password) => {
-    const passwordRegex = /^(?=.*[^a-zA-Z0-9].*[^a-zA-Z0-9]).{10,}$/;
-    return passwordRegex.test(password);
+    if (password.length < 10) {
+      toast.error('패스워드는 최소 10자 이상이어야 합니다.');
+      return false;
+    }
+    const specialCharCount = password.replace(/[a-zA-Z0-9]/g, '').length;
+    if (specialCharCount < 2) {
+      toast.error('패스워드는 최소 2개의 특수문자를 포함해야 합니다.');
+      return false;
+    }
+    return true;
   };
 
   const handlePasswordChange = async () => {

@@ -3,6 +3,7 @@ import LogoFontStyle from './FontStyle';
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { supabase } from '../supabase/supabase';
+import { useNavigate } from 'react-router-dom';
 
 const HeaderStyle = styled.div`
   position: fixed;
@@ -38,10 +39,12 @@ const SearchBox = styled.form`
 `;
 
 function Header() {
+
   const [userProfile, setUserProfile] = useState({
     nickname: '',
     profileImage: ''
   });
+
   const [searchValue, setSearchValue] = useState('');
   const onChangeSearch = (e) => {
     setSearchValue(e.target.value);
@@ -55,6 +58,15 @@ function Header() {
   };
   
   console.log(userProfile)
+
+  //테스트용 id
+  // const 우석핑 = '9e351071-01b9-4827-b797-6685d3348072';
+
+
+
+  const [user, setUser] = useState();
+  // const { data: urlData, error: urlError } = supabase.storage.from('post-images').getPublicUrl(data.path);   // src={publicUrl}
+
   const { image } = supabase.storage.from('avatars').getPublicUrl('profile.png');
 
   //테스트용 id
@@ -90,6 +102,46 @@ function Header() {
     fetchUserData();
   }, [supabase]);
 
+  const navigate = useNavigate();
+
+  async function signOut() {
+    const { error } = await supabase.auth.signOut(); // Supabase 로그아웃 호출
+    if (error) {
+      console.error('Error signing out:', error);
+      return;
+    }
+    console.log('로그아웃 성공!');
+    setUser(null);
+    navigate('/');
+    return;
+  }
+
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      const currentPath = location.pathname.toLowerCase(); // 현재 경로
+      const allowedPaths = ['/findpassword', '/join', '/']; // 비로그인 상태에서 허용된 경로 ('/'가 로그인 페이지)
+
+      if (!data?.session) {
+        // 비로그인 상태
+        if (!allowedPaths.includes(currentPath)) {
+          // 보호된 경로 접근 시 로그인 페이지로 리다이렉트
+          if (currentPath !== '/') {
+            navigate('/', { replace: true }); // 로그인 페이지로 이동
+          }
+        }
+      } else {
+        // 로그인 상태
+        if (currentPath === '/' || currentPath === '/join' || currentPath === '/findpassword') {
+          // 로그인 상태에서 로그인 관련 페이지 접근 시 홈으로 이동
+          navigate('/home', { replace: true }); // 홈으로 리다이렉트
+        }
+      }
+    };
+
+    checkSession();
+  }, [navigate, location.pathname]);
+
   return (
     <HeaderStyle>
       <Link to="/home">
@@ -103,6 +155,7 @@ function Header() {
 
       <MyPageStyle>
         <p>{userProfile.nickname}님 안녕하세요</p>
+        <button onClick={signOut}>로그아웃</button>
         <Link to="/mypage">
           <p>
             <img src={userProfile.profileImage} alt="프로필사진" />
@@ -112,5 +165,6 @@ function Header() {
     </HeaderStyle>
   );
 }
+
 
 export default Header;
