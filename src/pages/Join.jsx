@@ -19,7 +19,7 @@ const JoinCard = styled.div`
   }
 `;
 
-const JoinPasswoard = styled.form`
+const JoinPasswoard = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -197,12 +197,7 @@ function Join() {
             <LogoFontStyle>
               <Title>Voir le chemin</Title>
             </LogoFontStyle>
-            <JoinPasswoard
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSignUp(e);
-              }}
-            >
+            <JoinPasswoard>
               <JoinInput
                 email={email}
                 onChangeEmail={onChangeEmail}
@@ -213,12 +208,19 @@ function Join() {
                 nickname={nickname}
                 onChangeNickname={onChangeNickname}
               />
-              <StyledButton
-                style={{ margin: '20px', width: '300px', height: '70px', marginBottom: '-10px' }}
-                type="submit"
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleSignUp(e);
+                }}
               >
-                회원가입
-              </StyledButton>
+                <StyledButton
+                  style={{ margin: '20px', width: '300px', height: '70px', marginBottom: '-10px' }}
+                  type="submit"
+                >
+                  회원가입
+                </StyledButton>
+              </form>
             </JoinPasswoard>
           </StyledSection>
         </JoinCard>
