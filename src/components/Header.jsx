@@ -9,8 +9,9 @@ const HeaderStyle = styled.div`
   top: 0;
   width: 100%; /* 가로 너비 설정 */
   height: 50px;
+  
   background-color: #ffffff; /* (선택) 배경색 설정 */
-  z-index: 10px;
+  margin: 10px 20px;
   a {
     text-decoration: none;
   }
@@ -20,17 +21,10 @@ const HeaderStyle = styled.div`
     width: 32px;
     height: 32px;
     vertical-align: middle;
-  }
-  p {
-    display: flex;
-    align-items: center;
-  }
-  button {
-    width: 70px;
-    border: 1px solid none;
-    background: none;
+    /* background: ; */
   }
 `;
+
 const HeaderInner = styled.div`
   display: flex; /* Flexbox 사용 */
   justify-content: space-between; /* 양쪽 끝 정렬 */
@@ -38,11 +32,13 @@ const HeaderInner = styled.div`
   max-width: 800px;
   width: 100%;
   margin: 0 auto;
-`;
+`
+
 const MyPageStyle = styled.div`
   display: flex;
   flex-direction: row;
 `;
+
 const ProfileImage = styled.div`
   img {
     width: 50px;
@@ -55,9 +51,10 @@ function Header() {
     nickname: '',
     profileImage: ''
   });
-  console.log(userProfile);
-  const [user, setUser] = useState();
   
+  console.log(userProfile)
+
+  const [user, setUser] = useState();
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -65,10 +62,8 @@ function Header() {
           console.error('Error fetching user:', error);
           return;
         }
-        console.log(user);
-        const { data: publicUrlData, error: publicUrlError } = supabase.storage
-          .from('avatars')
-          .getPublicUrl('profile.png');
+        console.log(user)
+        const { data: publicUrlData, error: publicUrlError } = supabase.storage.from('avatars').getPublicUrl('profile.png');
         if (publicUrlError) {
           console.error('Error fetching public URL:', publicUrlError);
         } else {
@@ -78,7 +73,7 @@ function Header() {
         const profileImageUrl = userProfile.profileImage || imgUrl || '';
         const { data, error: usersError } = await supabase
           .from('users')
-          .select('user_nick_name, user_profile_image')
+          .select(['user_nick_name', 'user_profile_image'])
           .eq('id', user.id) // 실제 유저의 데이터 넣기    ex)유저.a.b.c.id
           .single();
         if (usersError) {
@@ -86,10 +81,7 @@ function Header() {
           return;
         }
         console.log('data', data);
-        setUserProfile({
-          nickname: data.user_nick_name || 'Guest',
-          profileImage: data.user_profile_image || profileImageUrl
-        }); // 기본값으로 'Guest' 설정
+        setUserProfile({ nickname: data.user_nick_name || 'Guest', profileImage: data.user_profile_image || profileImageUrl }); // 기본값으로 'Guest' 설정
       } catch (error) {
         console.log(error);
       }
@@ -134,20 +126,23 @@ function Header() {
   return (
     <HeaderStyle>
       <HeaderInner>
-        <Link to="/home">
-          <LogoFontStyle>Voir le chemin</LogoFontStyle>
+      <Link to="/home">
+        <LogoFontStyle>Voir le chemin</LogoFontStyle>
+      </Link>
+
+      <MyPageStyle>
+        <p>{userProfile.nickname}님 안녕하세요</p>
+        <button onClick={signOut}>로그아웃</button>
+        <Link to="/mypage">
+          <ProfileImage>
+            <img src={userProfile.profileImage} alt="프로필사진" />
+          </ProfileImage>
         </Link>
-        <MyPageStyle>
-          <p>{userProfile.nickname}님 안녕하세요</p>
-          <button onClick={signOut}>로그아웃</button>
-          <Link to="/mypage">
-            <ProfileImage>
-              <img src={userProfile.profileImage} alt="프로필사진" />
-            </ProfileImage>
-          </Link>
-        </MyPageStyle>
+      </MyPageStyle>
       </HeaderInner>
     </HeaderStyle>
   );
 }
+
+
 export default Header;
