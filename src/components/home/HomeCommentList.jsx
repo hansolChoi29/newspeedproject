@@ -1,7 +1,6 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { IoIosClose } from 'react-icons/io';
-import { supabase } from '../../supabase/supabase';
 import StyledSection from '../../styles/StyledSection';
 import HomeCommentForm from './HomeCommentForm';
 import HomeComment from './HomeComment';
@@ -43,48 +42,9 @@ const CommentCont = styled.div`
 `;
 
 export default function HomeCommentList({ postId }) {
-  const { setChatToggle, comments, setComments } = useContext(HomeContext);
+  const { setChatToggle, commentsData, setCommentsData } = useContext(HomeContext);
 
-  const fetchComments = async () => {
-    if (!postId) return;
-    const { data, error } = await supabase
-      .from('comments')
-      .select('id, comment_data, comment_created_at, user_id')
-      .eq('post_id', postId);
-
-    if (error) {
-      console.error(error);
-    } else {
-      setComments(data);
-    }
-  };
-
-  const updateComment = async (commentId, newCommentData) => {
-    try {
-      const { data, error } = await supabase
-        .from('comments')
-        .update({ comment_data: newCommentData })
-        .eq('id', commentId);
-
-      if (error) {
-        console.error(error);
-        return;
-      }
-
-      setComments((prevComments) =>
-        prevComments.map((comment) =>
-          comment.id === commentId ? { ...comment, comment_data: newCommentData } : comment
-        )
-      );
-    } catch (error) {
-      console.error('댓글 수정 오류:', error.message);
-    }
-  };
-  useEffect(() => {
-    if (postId) {
-      fetchComments();
-    }
-  }, [comments]);
+  const filteredComments = commentsData.filter((comment) => comment.post_id === postId);
 
   return (
     <CommentBg>
@@ -94,19 +54,16 @@ export default function HomeCommentList({ postId }) {
         </CloseBtn>
         <HomeCommentForm postId={postId} />
         <CommentCont>
-          {Array.isArray(comments) && comments.length === 0 ? (
+          {filteredComments.length === 0 ? (
             <p>🌴댓글이 없습니다</p>
           ) : (
-            Array.isArray(comments) &&
-            comments
-              .filter((comment) => comment && comment.comment_created_at)
+            filteredComments
               .sort((a, b) => new Date(b.comment_created_at) - new Date(a.comment_created_at))
               .map((comment) => (
                 <HomeComment
                   key={comment.id}
                   comment={comment}
-                  setComments={setComments}
-                  updateComment={updateComment}
+                  setCommentsData={setCommentsData} 
                 />
               ))
           )}
