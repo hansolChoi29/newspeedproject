@@ -49,8 +49,7 @@
 
 
 
-## ⏲️ 개발기간
-- 2024.02.26(월) ~ 2024.04.04(목)
+## ⏲️목)
 
 ## 📚️ 기술스택
 ![Context-API](https://img.shields.io/badge/Context--Api-000000?style=for-the-badge&logo=react)
