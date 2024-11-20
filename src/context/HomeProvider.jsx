@@ -5,13 +5,13 @@ export const HomeContext = createContext(null);
 
 export default function HomeProvider({ children }) {
   const [data, setData] = useState([]);
+  const [commentsData, setCommentsData] = useState([]);
   const [chat, setChat] = useState([]);
   const [chatToggle, setChatToggle] = useState(false);
   const [postId, setPostId] = useState('');
-  const [comments, setComments] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchPostsData = async () => {
       const { data, error } = await supabase.from('posts').select(`
           *,
           users (user_nick_name,id,user_profile_image),
@@ -24,7 +24,16 @@ export default function HomeProvider({ children }) {
         setData(data);
       }
     };
-    fetchData();
+    const fetchCommentsData = async () => {
+      const { data, error } = await supabase.from('comments').select(`*`);
+      if (error) {
+        console.error(error);
+      } else {
+        setCommentsData(data);
+      }
+    };
+    fetchPostsData();
+    fetchCommentsData();
   }, []);
 
   return (
@@ -38,8 +47,8 @@ export default function HomeProvider({ children }) {
         setPostId,
         chat,
         setChat,
-        comments,
-        setComments
+        commentsData,
+        setCommentsData
       }}
     >
       {children}

@@ -88,7 +88,7 @@ const ToggleButtonList = styled.div`
 `;
 
 export default function HomeListItem({ post }) {
-  const { setData, setChat, setPostId, chatToggle, setChatToggle } = useContext(HomeContext);
+  const { setData, setChat, setPostId, chatToggle, setChatToggle, commentsData } = useContext(HomeContext);
   const {
     id,
     post_contents,
@@ -99,11 +99,20 @@ export default function HomeListItem({ post }) {
     users: { user_nick_name },
     likes
   } = post;
+
   const [toggleLike, setToggleLike] = useState(false);
   const [likesCount, setLikesCount] = useState(likes.length);
   const [isVisible, setIsVisible] = useState(false);
+  const [commentList, setCommentList] = useState(comments);
+  const [commentCount, setCommentCount] = useState(comments.length);
 
-  const commentCount = post.comments ? post.comments.length : 0;
+  const updateCommentCount = () => {
+    setCommentCount(commentList.length);
+  };
+
+  useEffect(() => {
+    updateCommentCount();
+  }, [commentsData]);
 
   useEffect(() => {
     const currentUserLike = likes.find((like) => like.user_id === user_id && like.post_id === id);
@@ -112,10 +121,15 @@ export default function HomeListItem({ post }) {
     }
   }, [likes, user_id, id, comments]);
 
+  useEffect(() => {
+    setCommentList(comments);
+    setCommentCount(comments.length);
+  }, [comments]);
+
   const handleClickToggleComment = () => {
     setPostId(id);
     setChatToggle(!chatToggle);
-    setChat(comments);
+    setChat(commentList);
   };
 
   const handleLikeClick = async () => {
@@ -146,6 +160,7 @@ export default function HomeListItem({ post }) {
       console.error(error);
     }
   };
+
   const deletePost = async (postId) => {
     const { error } = await supabase.from('posts').delete().eq('id', postId);
     if (error) {
