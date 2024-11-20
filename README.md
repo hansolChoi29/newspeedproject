@@ -62,9 +62,6 @@
 
 
 
-## 서비스 구조
-
-
 
 ## 와이어프레임
 ![title](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbicSc8%2FbtsKP9krGUy%2FVkAKi4b4kcOQC7LvUI7MH1%2Fimg.png)
