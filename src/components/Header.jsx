@@ -10,12 +10,9 @@ const HeaderStyle = styled.div`
   top: 0;
   width: 100%; /* 가로 너비 설정 */
   height: 50px;
-  border-bottom: 1px solid black;
-  display: flex; /* Flexbox 사용 */
-  justify-content: space-around; /* 양쪽 끝 정렬 */
-  align-items: center; /* 수직 가운데 정렬 */
+  
   background-color: #ffffff; /* (선택) 배경색 설정 */
-  margin: 10px 20px;
+  z-index: 10px;
   a {
     text-decoration: none;
   }
@@ -25,18 +22,39 @@ const HeaderStyle = styled.div`
     width: 32px;
     height: 32px;
     vertical-align: middle;
-    /* background: ; */
+  }
+  p {
+    display: flex;
+    align-items: center;
+  }
+  button {
+    width: 70px;
+    border: 1px solid none;
+    background: none;
   }
 `;
+
+const HeaderInner = styled.div`
+  display: flex; /* Flexbox 사용 */
+  justify-content: space-between; /* 양쪽 끝 정렬 */
+  align-items: center; /* 수직 가운데 정렬 */
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+`
 
 const MyPageStyle = styled.div`
   display: flex;
   flex-direction: row;
 `;
 
-const SearchBox = styled.form`
-  border: 2px solid gray;
-`;
+const ProfileImage = styled.div`
+  img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+  }
+`
 
 function Header() {
 
@@ -44,34 +62,14 @@ function Header() {
     nickname: '',
     profileImage: ''
   });
-
-  const [searchValue, setSearchValue] = useState('');
-  const onChangeSearch = (e) => {
-    setSearchValue(e.target.value);
-  };
-  
-  const searchedValue = async (e) => {
-    e.preventDefault();
-    const { data, error } = await supabase.from('posts').select('*').like('post_contents', '@setSearchValue@')
-    console.log('searched: ', { data, error });
-    setData(data.user);
-  };
   
   console.log(userProfile)
 
-  //테스트용 id
-  // const 우석핑 = '9e351071-01b9-4827-b797-6685d3348072';
-
-
-
   const [user, setUser] = useState();
-  // const { data: urlData, error: urlError } = supabase.storage.from('post-images').getPublicUrl(data.path);   // src={publicUrl}
-
-  const { image } = supabase.storage.from('avatars').getPublicUrl('profile.png');
-
+  
   //테스트용 id
   // const 우석핑 = '9e351071-01b9-4827-b797-6685d3348072';
-
+  
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -84,6 +82,14 @@ function Header() {
           return;
         }
         console.log(user)
+        const { data: publicUrlData, error: publicUrlError } = supabase.storage.from('avatars').getPublicUrl('profile.png');
+        if (publicUrlError) {
+          console.error('Error fetching public URL:', publicUrlError);
+        } else {
+          console.log('Public URL Data:', publicUrlData);
+        }
+        const imgUrl = publicUrlData.publicUrl;
+        const profileImageUrl = userProfile.profileImage || imgUrl || '';
         const { data, error: usersError } = await supabase
           .from('users')
           .select('user_nick_name, user_profile_image')
@@ -94,7 +100,7 @@ function Header() {
           return;
         }
         console.log('data', data);
-        setUserProfile({ nickname: data.user_nick_name || 'Guest', profileImage: data.user_profile_image || '' }); // 기본값으로 'Guest' 설정
+        setUserProfile({ nickname: data.user_nick_name || 'Guest', profileImage: data.user_profile_image || profileImageUrl }); // 기본값으로 'Guest' 설정
       } catch (error) {
         console.log(error);
       }
@@ -144,24 +150,21 @@ function Header() {
 
   return (
     <HeaderStyle>
+      <HeaderInner>
       <Link to="/home">
         <LogoFontStyle>Voir le chemin</LogoFontStyle>
       </Link>
-
-      <SearchBox onSubmit={searchedValue}>
-        <input type="text" placeholder="어디가고 싶어?" value={searchValue} onChange={onChangeSearch} />
-        <button type="submit">🔍</button>
-      </SearchBox>
 
       <MyPageStyle>
         <p>{userProfile.nickname}님 안녕하세요</p>
         <button onClick={signOut}>로그아웃</button>
         <Link to="/mypage">
-          <p>
+          <ProfileImage>
             <img src={userProfile.profileImage} alt="프로필사진" />
-          </p>
+          </ProfileImage>
         </Link>
       </MyPageStyle>
+      </HeaderInner>
     </HeaderStyle>
   );
 }
