@@ -40,7 +40,7 @@ const BackgroundColor = styled.div`
   height: 100vh;
 `;
 
-const Title = styled.h1`
+const Title = styled.p`
   margin-top: 20px;
   font-size: 45px;
 `;
@@ -81,7 +81,7 @@ function Join() {
 
   const handleSignUp = async (e) => {
     e.preventDefault();
-    console.log(email);
+
     if (!email.trim()) {
       toast.error('네이버 이메일 주소를 입력하세요.');
       return;
