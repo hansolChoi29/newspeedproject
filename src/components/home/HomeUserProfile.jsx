@@ -21,7 +21,9 @@ const ProfileImg = styled.div`
   img {
     width: 50px;
     height: 50px;
-    object-fit: contain;
+    overflow: hidden;
+    border-radius: 50%;
+    object-fit: cover;
   }
 `;
 
@@ -41,8 +43,7 @@ export default function HomeUserProfile({ time, userNickName, userId }) {
   const profileImage = user?.users.user_profile_image || null;
 
   const { data: publicUrlData } = supabase.storage.from('avatars').getPublicUrl('profile.png');
-  const imgUrl = publicUrlData.publicUrl;
-  const profileImageUrl = profileImage ? imgUrl : publicUrlData?.publicUrl || '';
+  const profileImageUrl = profileImage ? profileImage : publicUrlData.publicUrl;
 
   return (
     <ProfileWrapper>

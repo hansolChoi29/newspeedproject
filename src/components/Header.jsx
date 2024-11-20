@@ -11,17 +11,25 @@ const HeaderStyle = styled.div`
   height: 50px;
   
   background-color: #ffffff; /* (선택) 배경색 설정 */
-  margin: 10px 20px;
+  z-index: 10px;
   a {
     text-decoration: none;
   }
   & a:nth-child(1) ::after {
-    content: ':사막_섬:';
+    content: '🏝️';
     display: inline-block;
     width: 32px;
     height: 32px;
     vertical-align: middle;
-    /* background: ; */
+  }
+  p {
+    display: flex;
+    align-items: center;
+  }
+  button {
+    width: 70px;
+    border: 1px solid none;
+    background: none;
   }
 `;
 
@@ -47,6 +55,7 @@ const ProfileImage = styled.div`
   }
 `;
 function Header() {
+
   const [userProfile, setUserProfile] = useState({
     nickname: '',
     profileImage: ''
@@ -55,6 +64,7 @@ function Header() {
   console.log(userProfile)
 
   const [user, setUser] = useState();
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -73,7 +83,7 @@ function Header() {
         const profileImageUrl = userProfile.profileImage || imgUrl || '';
         const { data, error: usersError } = await supabase
           .from('users')
-          .select(['user_nick_name', 'user_profile_image'])
+          .select('user_nick_name, user_profile_image')
           .eq('id', user.id) // 실제 유저의 데이터 넣기    ex)유저.a.b.c.id
           .single();
         if (usersError) {
