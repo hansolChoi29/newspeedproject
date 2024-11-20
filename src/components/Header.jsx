@@ -35,8 +35,14 @@ const MyPageStyle = styled.div`
 `;
 
 
-  
-
+const ProfileImage = styled.div`
+  img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    
+  }
+`
 
 function Header() {
   const [userProfile, setUserProfile] = useState({
