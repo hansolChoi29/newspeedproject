@@ -15,10 +15,9 @@
 3. [개발기간](#개발기간)
 4. [기술스택](#기술스택)
 5. [와이어프레임](#와이어프레임)
-6. [API 명세서](#API-명세서)
-7. [ERD](#ERD)
-8. [프로젝트 파일 구조](#프로젝트-파일-구조)
-9. [Trouble Shooting](#trouble-shooting)
+6. [ERD](#ERD)
+7. [프로젝트 파일 구조](#프로젝트-파일-구조)
+8. [Trouble Shooting](#trouble-shooting)
     
 
 
@@ -74,19 +73,9 @@
 ![Git](https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white)
 ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
 ![Vercel](https://img.shields.io/badge/vercel-%23000000.svg?style=for-the-badge&logo=vercel&logoColor=white)
-### ✔️ Language
 
 
-### ✔️ Version Control
 
-### ✔️ IDE
-
-### ✔️ Framework
-
-### ✔️ Deploy
-
-
-### ✔️  DBMS
 
 ## 서비스 구조
 
@@ -96,7 +85,6 @@
 
 
 
-## API 명세서
 
 
 ## ERD
