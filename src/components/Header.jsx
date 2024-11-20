@@ -105,7 +105,7 @@ function Header() {
         <p>{userProfile.nickname}님 안녕하세요</p>
         <Link to="/mypage">
           <p>
-            <img src='https://wkwqqcudsdumesjqcqht.supabase.co/storage/v1/object/public/avatars/9e351071-01b9-4827-b797-6685d3348072_1732021251989_123.png' alt="프로필사진" />
+            <img src={userProfile.profileImage} alt="프로필사진" />
           </p>
         </Link>
       </MyPageStyle>
