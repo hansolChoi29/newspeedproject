@@ -35,7 +35,7 @@ const LinkToPost = styled(Link)`
 
 export default function HomeList() {
   const { chatToggle, data, postId } = useContext(HomeContext);
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -43,7 +43,7 @@ export default function HomeList() {
       if (error) {
         console.error('User fetch error:', error);
       }
-      setUser(user);
+      setUser(user.user);
     };
 
     fetchUser();
@@ -51,7 +51,6 @@ export default function HomeList() {
 
   return (
     <StyledHomeList>
-      <Search />
       {data.length === 0 ? (
         <p>🌴글이 없습니다</p>
       ) : (
