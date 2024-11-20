@@ -2,9 +2,7 @@ import React, { useContext } from 'react';
 import { HomeContext } from '../../context/HomeProvider';
 import HomeListItem from './HomeListItem';
 import HomeCommentList from './HomeCommentList';
-<<<<<<< HEAD
 import Search from './Search';
-=======
 import styled from 'styled-components';
 import pencilIcon from '../../assets/write-icon.svg';
 import { Link } from 'react-router-dom';
@@ -32,7 +30,7 @@ const LinkToPost = styled(Link)`
     white-space: nowrap;
   }
 `;
->>>>>>> efc9296e6364e3dc80f8fa9bf297b81abf98c360
+
 
 export default function HomeList() {
   const { chatToggle, data, postId, setData } = useContext(HomeContext);
@@ -41,15 +39,11 @@ export default function HomeList() {
     <StyledHomeList>
       {data.length === 0 ? <p>🌴글이 없습니다</p> : data.map((post) => <HomeListItem key={post.id} post={post} />)}
       {chatToggle && <HomeCommentList postId={postId} />}
-<<<<<<< HEAD
       <p>{Search}</p>
-    </>
-=======
       <LinkToPost to="/post">
         <img src={pencilIcon} alt="" />
         <span>작성하기</span>
       </LinkToPost>
     </StyledHomeList>
->>>>>>> efc9296e6364e3dc80f8fa9bf297b81abf98c360
   );
 }
