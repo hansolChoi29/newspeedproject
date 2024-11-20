@@ -1,6 +1,6 @@
 ## PROJECT: Voir le chemin (길을 보다)
 추천하고싶은 여행지나 가보고 싶은 여행지를 마음껏 말해보는 브라우저입니다. 다른 사용자들이 이동한 코스나 맛집에 대한 정보를 구경할 수 있고 본인이 마음에 든 여행지에 대해 북마크를 설정해두고 필요할 때 찾아볼 수 있습니다
-
+![title](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbQrFbQ%2FbtsKO8tfRoT%2FN1ZVKR8pbnGDZbgrIdjY3k%2Fimg.png)   
 ## 팀원소개 (한솔과 다섯 똘마니 5조)
 |팀장|부팀장|팀원|팀원|팀원|팀원|
 |:---:|:---:|:---:|:---:|:---:|:---:|
