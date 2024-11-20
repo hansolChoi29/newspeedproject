@@ -4,6 +4,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import { supabase } from '../supabase/supabase';
 import styled from 'styled-components';
 import StyledButton from '../styles/StyledButton';
+import ResetInput from '../components/login/ResetInput';
 
 const ResetPassword = () => {
   const [newpassword, setNewPassword] = useState('');
@@ -45,8 +46,16 @@ const ResetPassword = () => {
   }, [accessToken, navigate]);
 
   const validPassword = (password) => {
-    const passwordRegex = /^(?=.*[^a-zA-Z0-9].*[^a-zA-Z0-9]).{10,}$/;
-    return passwordRegex.test(password);
+    if (password.length < 10) {
+      toast.error('패스워드는 최소 10자 이상이어야 합니다.');
+      return false;
+    }
+    const specialCharCount = password.replace(/[a-zA-Z0-9]/g, '').length;
+    if (specialCharCount < 2) {
+      toast.error('패스워드는 최소 2개의 특수문자를 포함해야 합니다.');
+      return false;
+    }
+    return true;
   };
 
   const handlePasswordChange = async () => {
@@ -87,26 +96,22 @@ const ResetPassword = () => {
       <ToastContainer />
       <BackgroundColor />
       <PasswordCord>
-        <ResetCardInput>
-          <label>변경할 패스워드</label>
-          <input
-            value={newpassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            type="password"
-            placeholder="변경하실 패스워드를 입력해주세요"
-          ></input>
-          <label>패스워드 확인</label>
-          <input
-            value={confimPassword}
-            onChange={(e) => setConfimPassword(e.target.value)}
-            type="password"
-            placeholder="변경할 패스워드가 맞는지 확인해주세요"
-          ></input>
-        </ResetCardInput>
-        <StyledButton style={{ height: '60px', width: '300px', marginTop: '-50px' }} onClick={handlePasswordChange}>
+        <ResetInput
+          newpassword={newpassword}
+          confimPassword={confimPassword}
+          setNewPassword={setNewPassword}
+          setConfimPassword={setConfimPassword}
+        />
+
+        <StyledButton
+          type="button"
+          style={{ height: '60px', width: '300px', marginTop: '-50px' }}
+          onClick={handlePasswordChange}
+        >
           패스워드 변경하기
         </StyledButton>
         <StyledButton
+          type="button"
           style={{ height: '60px', width: '300px', backgroundColor: '#F4A460', marginTop: '20px' }}
           onClick={goLogin}
         >
@@ -116,20 +121,6 @@ const ResetPassword = () => {
     </div>
   );
 };
-
-const ResetCardInput = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 200px;
-  & input {
-    text-align: center;
-    width: 275px;
-    height: 50px;
-    margin: 15px;
-  }
-`;
 
 const PasswordCord = styled.div`
   display: flex;
