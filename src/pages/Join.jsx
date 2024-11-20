@@ -6,20 +6,20 @@ import styled from 'styled-components';
 import StyledButton from '../styles/StyledButton';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import JoinInput from '../components/join/JoinInput'
+import JoinInput from '../components/join/JoinInput';
 
 const JoinCard = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh; 
+  height: 100vh;
   section {
     background-color: white;
     box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.3);
   }
 `;
 
-const JoinPasswoard = styled.form`
+const JoinPasswoard = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -38,13 +38,12 @@ const StyledSection = styled.div`
 const BackgroundColor = styled.div`
   background-image: linear-gradient(to right top, #87ceeb, #96dce0, #b4e6d6, #d7eed4, #f5f5dc);
   height: 100vh;
-
 `;
 
-const Title = styled.h1`
-  margin-top: 20px; 
+const Title = styled.p`
+  margin-top: 20px;
   font-size: 45px;
-`
+`;
 
 function Join() {
   const [email, setEmail] = useState('');
@@ -71,7 +70,7 @@ function Join() {
   };
 
   const validEmail = (email) => {
-    const emailRegex = /^\w+@(naver\.com)$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@naver\.com$/;
     return emailRegex.test(email);
   };
 
@@ -137,23 +136,23 @@ function Join() {
         return;
       }
 
-          const { data: duplicateEmail, error: emailCheckError } = await supabase
-            .from('users')
-            .select('user_email')
-            .eq('user_email', email);
+      const { data: duplicateEmail, error: emailCheckError } = await supabase
+        .from('users')
+        .select('user_email')
+        .eq('user_email', email);
 
-          console.log('Duplicate Email Check:', duplicateEmail);
+      console.log('Duplicate Email Check:', duplicateEmail);
 
-          if (emailCheckError) {
-            console.error('Email Check Error:', emailCheckError.message);
-            toast.error('이메일 중복 확인 중 오류가 발생했습니다.');
-            return;
-          }
+      if (emailCheckError) {
+        console.error('Email Check Error:', emailCheckError.message);
+        toast.error('이메일 중복 확인 중 오류가 발생했습니다.');
+        return;
+      }
 
-          if (duplicateEmail.length > 0) {
-            toast.error('이미 사용 중인 이메일입니다.');
-            return;
-          }
+      if (duplicateEmail.length > 0) {
+        toast.error('이미 사용 중인 이메일입니다.');
+        return;
+      }
 
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -181,7 +180,6 @@ function Join() {
         return;
       }
 
-      
       setUser(data.user);
       navigate('/Home');
     } catch (err) {
@@ -200,26 +198,29 @@ function Join() {
               <Title>Voir le chemin</Title>
             </LogoFontStyle>
             <JoinPasswoard>
-              <JoinInput>
-                value={email}
-                onChange={onChangeEmail}
-                value={password}
-                onChange={onChangePassword}
-                value={password}
-                onChange={onChangeConfirmPassword}
-                value={nickname}
-                onChange={onChangeNickname}
-              </JoinInput>
-              <StyledButton
-                style={{ margin: '20px', width: '300px', height: '70px', marginBottom: '-10px' }}
-                type="button"
-                onClick={(e) => {
+              <JoinInput
+                email={email}
+                onChangeEmail={onChangeEmail}
+                password={password}
+                onChangePassword={onChangePassword}
+                confirmPassword={confirmPassword}
+                onChangeConfirmPassword={onChangeConfirmPassword}
+                nickname={nickname}
+                onChangeNickname={onChangeNickname}
+              />
+              <form
+                onSubmit={(e) => {
                   e.preventDefault();
                   handleSignUp(e);
                 }}
               >
-                회원가입
-              </StyledButton>
+                <StyledButton
+                  style={{ margin: '20px', width: '300px', height: '70px', marginBottom: '-10px' }}
+                  type="submit"
+                >
+                  회원가입
+                </StyledButton>
+              </form>
             </JoinPasswoard>
           </StyledSection>
         </JoinCard>

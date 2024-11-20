@@ -48,6 +48,7 @@ const MyPageStyle = styled.div`
   flex-direction: row;
 `;
 
+
 const ProfileImage = styled.div`
   img {
     width: 50px;

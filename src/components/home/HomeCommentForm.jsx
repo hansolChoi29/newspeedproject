@@ -27,7 +27,7 @@ const StyledForm = styled.form`
 
 export default function HomeCommentForm({ postId }) {
   const [commentValue, setCommentValue] = useState('');
-  const { setComments } = useContext(HomeContext);
+  const { setCommentsData } = useContext(HomeContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,17 +44,22 @@ export default function HomeCommentForm({ postId }) {
         return;
       }
 
-      const { data, error } = await supabase.from('comments').insert([
-        {
-          post_id: postId,
-          comment_data: commentValue,
-          user_id: user.user.id
-        }
-      ]);
+      const { data, error } = await supabase
+        .from('comments')
+        .insert([
+          {
+            post_id: postId,
+            comment_data: commentValue,
+            user_id: user.user.id
+          }
+        ])
+        .select();
 
       if (error) throw error;
 
-      setComments((prevComments) => [...prevComments, data]);
+      if (data && data.length > 0) {
+        setCommentsData((prevComments) => [...prevComments, ...data]);
+      }
       setCommentValue('');
     } catch (error) {
       console.error('댓글 추가 오류:', error.message);

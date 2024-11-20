@@ -5,6 +5,10 @@ import { toast, ToastContainer } from 'react-toastify';
 import styled from 'styled-components';
 import StyledButton from '../styles/StyledButton';
 
+const BackgroundColor = styled.div`
+  height: 100vh;
+  background-image: linear-gradient(to right top, #87ceeb, #96dce0, #b4e6d6, #d7eed4, #f5f5dc);
+`;
 const FindPasswordCard = styled.div`
   display: flex;
   flex-direction: column;
@@ -94,8 +98,4 @@ export const FindPassword = () => {
   );
 };
 
-const BackgroundColor = styled.div`
-  height: 100vh;
-  background-image: linear-gradient(to right top, #87ceeb, #96dce0, #b4e6d6, #d7eed4, #f5f5dc);
-`;
 export default FindPassword;
