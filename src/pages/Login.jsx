@@ -9,7 +9,6 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Button from '../components/login/button';
 import Loginpassword from '../components/login/input';
-import { useLocation } from 'react-router-dom';
 
 const LoginCard = styled.div`
   display: flex;
@@ -76,7 +75,6 @@ function Login() {
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
-  // const location = useLocation();
 
   // 로그인하지 않은 상태에서 접근 제한
   const loginUser = async () => {
