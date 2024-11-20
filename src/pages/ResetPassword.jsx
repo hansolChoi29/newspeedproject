@@ -6,6 +6,25 @@ import styled from 'styled-components';
 import StyledButton from '../styles/StyledButton';
 import ResetInput from '../components/login/ResetInput';
 
+const PasswordCord = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 630px;
+  width: 450px;
+  background-color: white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+`;
+
+const BackgroundColor = styled.div`
+  height: 100vh;
+  background-image: linear-gradient(to right top, #87ceeb, #96dce0, #b4e6d6, #d7eed4, #f5f5dc);
+`;
+
 const ResetPassword = () => {
   const [newpassword, setNewPassword] = useState('');
   const [confimPassword, setConfimPassword] = useState('');
@@ -39,7 +58,6 @@ const ResetPassword = () => {
       }
 
       setUser(data); // 사용자 정보 저장
-      console.log('현재 사용자:', data);
     };
 
     fetchUser();
@@ -82,7 +100,6 @@ const ResetPassword = () => {
         navigate('/');
       }
     } catch (err) {
-      console.error(err);
       toast.error('서버와 연결할 수 없습니다. 다시 시도해주세요');
     }
   };
@@ -121,24 +138,5 @@ const ResetPassword = () => {
     </div>
   );
 };
-
-const PasswordCord = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 630px;
-  width: 450px;
-  background-color: white;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-`;
-
-const BackgroundColor = styled.div`
-  height: 100vh;
-  background-image: linear-gradient(to right top, #87ceeb, #96dce0, #b4e6d6, #d7eed4, #f5f5dc);
-`;
 
 export default ResetPassword;

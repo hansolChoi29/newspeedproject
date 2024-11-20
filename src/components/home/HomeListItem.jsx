@@ -87,7 +87,7 @@ const ToggleButtonList = styled.div`
   }
 `;
 
-export default function HomeListItem({ post }) {
+export default function HomeListItem({ post, user }) {
   const { setData, setChat, setPostId, chatToggle, setChatToggle, commentsData } = useContext(HomeContext);
   const {
     id,
@@ -106,25 +106,20 @@ export default function HomeListItem({ post }) {
   const [commentList, setCommentList] = useState(comments);
   const [commentCount, setCommentCount] = useState(comments.length);
 
-  const updateCommentCount = () => {
-    setCommentCount(commentList.length);
-  };
-
-  useEffect(() => {
-    updateCommentCount();
-  }, [commentsData]);
-
-  useEffect(() => {
-    const currentUserLike = likes.find((like) => like.user_id === user_id && like.post_id === id);
-    if (currentUserLike) {
-      setToggleLike(true);
-    }
-  }, [likes, user_id, id, comments]);
-
   useEffect(() => {
     setCommentList(comments);
     setCommentCount(comments.length);
-  }, [comments]);
+  }, [commentsData]);
+
+  // 좋아요 상태 확인
+  useEffect(() => {
+    const currentUserLike = likes.find((like) => like.user_id === user.id && like.post_id === id);
+    if (currentUserLike) {
+      setToggleLike(true); // 이미 좋아요를 눌렀다면 true
+    } else {
+      setToggleLike(false); // 아니면 false
+    }
+  }, [likes, user, id]);
 
   const handleClickToggleComment = () => {
     setPostId(id);
@@ -133,31 +128,49 @@ export default function HomeListItem({ post }) {
   };
 
   const handleLikeClick = async () => {
-    setToggleLike(!toggleLike);
-    setLikesCount((prevCount) => (toggleLike ? prevCount - 1 : prevCount + 1));
+    const currentLike = likes.find((like) => like.user_id === user.id && like.post_id === id);
+    if (currentLike) {
+      // 좋아요 취소
+      const { error } = await supabase.from('likes').delete().eq('user_id', user.id).eq('post_id', id);
 
-    try {
-      const currentLike = likes.find((like) => like.post_id === id && like.user_id === user_id);
-
-      if (toggleLike && currentLike) {
-        const { error } = await supabase.from('likes').delete().eq('post_id', id).eq('user_id', user_id);
-        if (error) {
-          console.error(error);
-        }
+      if (error) {
+        console.error(error);
       } else {
-        const { error } = await supabase.from('likes').insert([
-          {
-            post_id: id,
-            user_id,
-            likes_count: 1
-          }
-        ]);
-        if (error) {
-          console.error(error);
+        // 좋아요 취소 후 likes_count 업데이트
+        const { error: updateError } = await supabase
+          .from('posts')
+          .update({ likes_count: likesCount - 1 })
+          .eq('id', id);
+
+        if (updateError) {
+          console.error(updateError);
         }
+
+        // 상태 업데이트
+        setLikesCount(likesCount - 1);
+        setToggleLike(false); // 좋아요 취소했으므로 false
       }
-    } catch (error) {
-      console.error(error);
+    } else {
+      // 좋아요 추가
+      const { error } = await supabase.from('likes').insert([{ user_id: user.id, post_id: id }]);
+
+      if (error) {
+        console.error(error);
+      } else {
+        // 좋아요 추가 후 likes_count 업데이트
+        const { error: updateError } = await supabase
+          .from('posts')
+          .update({ likes_count: likesCount + 1 })
+          .eq('id', id);
+
+        if (updateError) {
+          console.error(updateError);
+        }
+
+        // 상태 업데이트
+        setLikesCount(likesCount + 1);
+        setToggleLike(true); // 좋아요를 추가했으므로 true
+      }
     }
   };
 
@@ -197,7 +210,7 @@ export default function HomeListItem({ post }) {
       <ImgBox>
         {post_imgs && post_imgs.length > 0 && post_imgs.map((img, index) => <img key={index} src={img} />)}
       </ImgBox>
-      <TextContent>{post_contents}</TextContent>
+      {post_contents.length === 0 ? null : <TextContent>{post_contents}</TextContent>}
       <BtnBox>
         <button type="button" onClick={handleClickToggleComment}>
           <IoChatbubbleOutline />
