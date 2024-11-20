@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 const Label = styled.label`
   display: block;
-  margin-top: 10px;
+  margin-top: 5px;
   font-size: 13px;
 `;
 
