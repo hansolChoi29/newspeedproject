@@ -3,7 +3,8 @@ import styled from 'styled-components';
 
 const Label = styled.label`
   display: block;
-  margin-top: 10px;
+  height: 1px;
+  margin-top: 30px;
   font-size: 13px;
 `;
 
@@ -17,7 +18,6 @@ const InputStyle = styled.input`
 
 const InputStylE = styled.div`
   margin-top: 60px;
-  margin-left: 70px;
 `;
 
 const Loginpassword = ({ email, setEmail, password, setPassword }) => {

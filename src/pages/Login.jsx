@@ -7,18 +7,8 @@ import whaleImg from '../image/LoginWhaleImg.png';
 import { supabase } from '../supabase/supabase';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Button from '../components/login/button';
-import Loginpassword from '../components/login/input';
-
-const LoginCard = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  section {
-    background-color: white;
-    box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.3);
-  }
-`;
+import Button from '../components/login/Button';
+import Loginpassword from '../components/login/Input';
 
 const LoginPasswoardStyle = styled.form`
   display: flex;
@@ -35,7 +25,17 @@ const LoginPasswoardStyle = styled.form`
     border-color: #ecebeb;
     box-sizing: border-box;
     text-align: center;
-    margin-top: -20px;
+    margin-top: -10px;
+  }
+`;
+
+const LoginCard = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  section {
+    background-color: white;
+    box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.3);
   }
 `;
 
@@ -60,6 +60,7 @@ const LoginWhaleImg = styled.img`
 `;
 
 const BackgroundColor = styled.div`
+  overflow: hidden;
   background-image: linear-gradient(to right top, #87ceeb, #96dce0, #b4e6d6, #d7eed4, #f5f5dc);
 `;
 
@@ -74,11 +75,11 @@ function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
+  // 로그인하지 않은 상태에서 접근 제한
   const loginUser = async () => {
-    console.log(email, password);
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    console.log(data);
     if (data?.user) {
       setUser(data.user);
       handleGoHome();
@@ -93,7 +94,6 @@ function Login() {
     }
   }, [user]);
 
-  const navigate = useNavigate();
   const handleGoHome = () => {
     navigate('./Home');
   };
@@ -117,14 +117,19 @@ function Login() {
         <LoginCard style={{ height: '100vh' }}>
           <StyledSection>
             <LogoFontStyle>
-              <h1 style={{ marginTop: '30px', fontSize: '45px' }}>Voir le chemin</h1>
+              <p style={{ marginTop: '30px', fontSize: '45px' }}>Voir le chemin</p>
             </LogoFontStyle>
 
-            <Loginpassword email={email} setEmail={setEmail} password={password} setPassword={setPassword} />
+            <LoginPasswoardStyle
+              onSubmit={(e) => {
+                e.preventDefault(); // 기본 새로고침 방지
+                loginUser(); // 엔터 키와 버튼 클릭 모두 처리
+              }}
+            >
+              <Loginpassword email={email} setEmail={setEmail} password={password} setPassword={setPassword} />
 
-            <LoginPasswoardStyle>
               <P onClick={FindPasswordPage}>패스워드를 잊으셨나요?</P>
-              <Button loginUser={loginUser} handleSingup={handleSingup} loginText="로그인" signupText="회원가입" />
+              <Button handleSingup={handleSingup} />
             </LoginPasswoardStyle>
           </StyledSection>
         </LoginCard>

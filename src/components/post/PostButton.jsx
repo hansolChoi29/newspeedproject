@@ -12,6 +12,7 @@ const ButtonGroup = styled.div`
 `;
 
 function PostButton() {
+<<<<<<< HEAD
   const { isEditMode, setIsEditMode, setContents, setPostImages, setPreviewUrls, navigate } = useContext(PostContext);
 
   // Cancel 버튼
@@ -34,6 +35,16 @@ function PostButton() {
         //취소
       }
     });
+=======
+  const { isEditMode, setContents, setPostImages, setPreviewUrls, navigate } = useContext(PostContext);
+
+  // Cancel 버튼
+  const onCancel = () => {
+    setContents('');
+    setPostImages([]);
+    setPreviewUrls([]);
+    navigate('/home'); // 홈 페이지로 이동
+>>>>>>> 1074c0a73499f98f3339613b86aa3eb9415e63d6
   };
 
   return (

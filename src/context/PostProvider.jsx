@@ -14,7 +14,6 @@ export default function PostProvider({ children }) {
 
   const navigate = useNavigate();
 
-  //  Supabase에서 현재 사용자의 데이터를 가져오기
   const getUser = async () => {
     const {
       data: { user },
@@ -41,6 +40,8 @@ export default function PostProvider({ children }) {
         getUser,
         postId,
         setPostId,
+        isEditMode,
+        setIsEditMode,
         contents,
         setContents,
         postImages,
