@@ -11,7 +11,7 @@ const HeaderStyle = styled.div`
   height: 50px;
   
   background-color: #ffffff; /* (선택) 배경색 설정 */
-  z-index: 10px;
+  z-index: 10;
   a {
     text-decoration: none;
   }
@@ -51,33 +51,34 @@ const ProfileImage = styled.div`
   img {
     width: 50px;
     height: 50px;
-    object-fit: contain;
+    object-fit: cover;
+    border-radius: 50%; /* 이미지를 동그랗게 */
+    border: 2px solid #ccc; /* 선택: 테두리를 추가 */
   }
 `;
 function Header() {
-
   const [userProfile, setUserProfile] = useState({
     nickname: '',
     profileImage: ''
   });
-  
-  console.log(userProfile)
-
   const [user, setUser] = useState();
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        function Header() {
+        // 현재 로그인된 유저 정보 가져오기
+        const { data: { user }, error } = await supabase.auth.getUser();
+        if (error || !user) {
           console.error('Error fetching user:', error);
           return;
         }
-        console.log(user)
-        const { data: publicUrlData, error: publicUrlError } = supabase.storage.from('avatars').getPublicUrl('profile.png');
+        setUser(user);
+        // 프로필 이미지 URL 가져오기
+        const { data: publicUrlData, error: publicUrlError } = supabase.storage
+          .from('avatars')
+          .getPublicUrl('profile.png');
         if (publicUrlError) {
           console.error('Error fetching public URL:', publicUrlError);
-        } else {
-          console.log('Public URL Data:', publicUrlData);
         }
         const imgUrl = publicUrlData.publicUrl;
         const profileImageUrl = userProfile.profileImage || imgUrl || '';
@@ -90,14 +91,15 @@ function Header() {
           console.error('Error fetching users:', usersError);
           return;
         }
-        console.log('data', data);
-        setUserProfile({ nickname: data.user_nick_name || 'Guest', profileImage: data.user_profile_image || profileImageUrl }); // 기본값으로 'Guest' 설정
+
+        setUserProfile({ nickname: data.user_nick_name || 'Guest', profileImage: data.user_profile_image || imgUrl }); // 기본값으로 'Guest' 설정
       } catch (error) {
-        console.log(error);
+        console.error('Unexpected error fetching user data:', error);
       }
     };
     fetchUserData();
-  }, [supabase]);
+  }, []);
+
   const navigate = useNavigate();
   async function signOut() {
     const { error } = await supabase.auth.signOut(); // Supabase 로그아웃 호출
