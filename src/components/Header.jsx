@@ -98,7 +98,7 @@ function Header() {
       }
     };
     fetchUserData();
-  }, []);
+  }, [userProfile]);
 
   const navigate = useNavigate();
   async function signOut() {
@@ -155,6 +155,5 @@ function Header() {
     </HeaderStyle>
   );
 }
-
 
 export default Header;
