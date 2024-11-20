@@ -10,6 +10,25 @@ import 'react-toastify/dist/ReactToastify.css';
 import Button from '../components/login/Button';
 import Loginpassword from '../components/login/Input';
 
+const LoginPasswoardStyle = styled.form`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  width: 450px;
+  height: 550px;
+  box-sizing: border-box;
+  padding: 30px;
+  & input {
+    width: 300px;
+    height: 70px;
+    border-color: #ecebeb;
+    box-sizing: border-box;
+    text-align: center;
+    margin-top: -10px;
+  }
+`;
+
 const LoginCard = styled.div`
   display: flex;
   justify-content: center;
@@ -60,9 +79,7 @@ function Login() {
 
   // 로그인하지 않은 상태에서 접근 제한
   const loginUser = async () => {
-    console.log(email, password);
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    console.log(data);
     if (data?.user) {
       setUser(data.user);
       handleGoHome();
@@ -72,7 +89,6 @@ function Login() {
     }
   };
 
-  console.log(user);
   useEffect(() => {
     if (user) {
     }
@@ -121,23 +137,5 @@ function Login() {
     </>
   );
 }
-const LoginPasswoardStyle = styled.form`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  width: 450px;
-  height: 550px;
-  box-sizing: border-box;
-  padding: 30px;
-  & input {
-    width: 300px;
-    height: 70px;
-    border-color: #ecebeb;
-    box-sizing: border-box;
-    text-align: center;
-    margin-top: -10px;
-  }
-`;
 
 export default Login;
