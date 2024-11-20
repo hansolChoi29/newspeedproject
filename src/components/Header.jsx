@@ -4,20 +4,18 @@ import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { supabase } from '../supabase/supabase';
 import { useNavigate } from 'react-router-dom';
-
 const HeaderStyle = styled.div`
   position: fixed;
   top: 0;
   width: 100%; /* 가로 너비 설정 */
   height: 50px;
-  
   background-color: #ffffff; /* (선택) 배경색 설정 */
   z-index: 10px;
   a {
     text-decoration: none;
   }
   & a:nth-child(1) ::after {
-    content: '🏝️';
+    content: ':사막_섬:';
     display: inline-block;
     width: 32px;
     height: 32px;
@@ -33,7 +31,6 @@ const HeaderStyle = styled.div`
     background: none;
   }
 `;
-
 const HeaderInner = styled.div`
   display: flex; /* Flexbox 사용 */
   justify-content: space-between; /* 양쪽 끝 정렬 */
@@ -41,49 +38,37 @@ const HeaderInner = styled.div`
   max-width: 800px;
   width: 100%;
   margin: 0 auto;
-`
-
+`;
 const MyPageStyle = styled.div`
   display: flex;
   flex-direction: row;
 `;
-
 const ProfileImage = styled.div`
   img {
     width: 50px;
     height: 50px;
     object-fit: contain;
-    
   }
-`
-
+`;
 function Header() {
-
   const [userProfile, setUserProfile] = useState({
     nickname: '',
     profileImage: ''
   });
-  
-  console.log(userProfile)
-
+  console.log(userProfile);
   const [user, setUser] = useState();
-  
-  //테스트용 id
-  // const 우석핑 = '9e351071-01b9-4827-b797-6685d3348072';
   
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const {
-          data: { user }, // 여기 유저안의 아이디
-          error
-        } = await supabase.auth.getUser(); // 로그인이 되어 있는 유저
-        if (error) {
+        function Header() {
           console.error('Error fetching user:', error);
           return;
         }
-        console.log(user)
-        const { data: publicUrlData, error: publicUrlError } = supabase.storage.from('avatars').getPublicUrl('profile.png');
+        console.log(user);
+        const { data: publicUrlData, error: publicUrlError } = supabase.storage
+          .from('avatars')
+          .getPublicUrl('profile.png');
         if (publicUrlError) {
           console.error('Error fetching public URL:', publicUrlError);
         } else {
@@ -101,16 +86,17 @@ function Header() {
           return;
         }
         console.log('data', data);
-        setUserProfile({ nickname: data.user_nick_name || 'Guest', profileImage: data.user_profile_image || profileImageUrl }); // 기본값으로 'Guest' 설정
+        setUserProfile({
+          nickname: data.user_nick_name || 'Guest',
+          profileImage: data.user_profile_image || profileImageUrl
+        }); // 기본값으로 'Guest' 설정
       } catch (error) {
         console.log(error);
       }
     };
     fetchUserData();
   }, [supabase]);
-
   const navigate = useNavigate();
-
   async function signOut() {
     const { error } = await supabase.auth.signOut(); // Supabase 로그아웃 호출
     if (error) {
@@ -122,13 +108,11 @@ function Header() {
     navigate('/');
     return;
   }
-
   useEffect(() => {
     const checkSession = async () => {
       const { data } = await supabase.auth.getSession();
       const currentPath = location.pathname.toLowerCase(); // 현재 경로
       const allowedPaths = ['/findpassword', '/join', '/']; // 비로그인 상태에서 허용된 경로 ('/'가 로그인 페이지)
-
       if (!data?.session) {
         // 비로그인 상태
         if (!allowedPaths.includes(currentPath)) {
@@ -145,30 +129,25 @@ function Header() {
         }
       }
     };
-
     checkSession();
   }, [navigate, location.pathname]);
-
   return (
     <HeaderStyle>
       <HeaderInner>
-      <Link to="/home">
-        <LogoFontStyle>Voir le chemin</LogoFontStyle>
-      </Link>
-
-      <MyPageStyle>
-        <p>{userProfile.nickname}님 안녕하세요</p>
-        <button onClick={signOut}>로그아웃</button>
-        <Link to="/mypage">
-          <ProfileImage>
-            <img src={userProfile.profileImage} alt="프로필사진" />
-          </ProfileImage>
+        <Link to="/home">
+          <LogoFontStyle>Voir le chemin</LogoFontStyle>
         </Link>
-      </MyPageStyle>
+        <MyPageStyle>
+          <p>{userProfile.nickname}님 안녕하세요</p>
+          <button onClick={signOut}>로그아웃</button>
+          <Link to="/mypage">
+            <ProfileImage>
+              <img src={userProfile.profileImage} alt="프로필사진" />
+            </ProfileImage>
+          </Link>
+        </MyPageStyle>
       </HeaderInner>
     </HeaderStyle>
   );
 }
-
-
 export default Header;
