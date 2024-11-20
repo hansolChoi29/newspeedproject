@@ -11,11 +11,10 @@ const ButtonGroup = styled.div`
 `;
 
 function PostButton() {
-  const { isEditMode } = useContext(PostContext);
+  const { isEditMode, setContents, setPostImages, setPreviewUrls, navigate } = useContext(PostContext);
 
   // Cancel 버튼
   const onCancel = () => {
-    console.log('취소버튼');
     setContents('');
     setPostImages([]);
     setPreviewUrls([]);
