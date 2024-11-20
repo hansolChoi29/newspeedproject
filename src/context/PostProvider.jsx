@@ -10,6 +10,7 @@ export default function PostProvider({ children }) {
   const [contents, setContents] = useState('');
   const [postImages, setPostImages] = useState([]);
   const [previewUrls, setPreviewUrls] = useState([]);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   const navigate = useNavigate();
 
@@ -46,7 +47,9 @@ export default function PostProvider({ children }) {
         setPostImages,
         previewUrls,
         setPreviewUrls,
-        navigate
+        navigate,
+        isEditMode,
+        setIsEditMode
       }}
     >
       {children}

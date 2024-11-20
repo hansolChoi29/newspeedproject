@@ -4,7 +4,7 @@ import { supabase } from '../../supabase/supabase';
 import { PostContext } from '../../context/PostProvider';
 import PostButton from './PostButton';
 import { useParams } from 'react-router-dom';
-import StyledButton from '../../styles/StyledButton';
+import { toast } from 'react-toastify';
 
 const PostForm = styled.form`
   display: flex;
@@ -78,12 +78,6 @@ const FileInputLabel = styled.label`
   cursor: pointer;
   margin-bottom: 20px;
 `;
-const ButtonGroup = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 100px;
-  margin: 50px;
-`;
 
 const PreviewImgContainer = styled.div`
   position: relative;
@@ -115,6 +109,8 @@ function PostFormEditor() {
     getUser,
     postId,
     setPostId,
+    isEditMode,
+    setIsEditMode,
     contents,
     setContents,
     postImages,
@@ -124,16 +120,15 @@ function PostFormEditor() {
     navigate
   } = useContext(PostContext);
 
-  const [isEditMode, setIsEditMode] = useState(false);
-
-  const { id } = useParams(); // URL에서 게시물 ID를 가져옵니다.
+  // URL에서 postId 가져오기
+  const { id } = useParams();
 
   useEffect(() => {
     getUser();
   }, []);
 
   useEffect(() => {
-    console.log('useEffect', id);
+    console.log('useEffect_id', id);
     if (id && id !== ':id') {
       setIsEditMode(true);
       setPostId(id);
@@ -156,14 +151,6 @@ function PostFormEditor() {
     };
   }, [previewUrls]);
 
-  useEffect(() => {
-    if (id) {
-      setIsEditMode(true);
-      setPostId(id);
-      loadPostData(id);
-    }
-  }, [id]);
-
   const onChangeContent = (e) => {
     setContents(e.target.value);
   };
@@ -174,7 +161,7 @@ function PostFormEditor() {
 
     // 게시물 내용이나 이미지가 있는지 확인
     if (!contents.trim() && postImages.length === 0) {
-      alert('내용을 입력하거나 이미지를 선택해주세요.');
+      toast.info('내용을 입력하거나 이미지를 선택해주세요.');
       return;
     }
 
@@ -184,15 +171,13 @@ function PostFormEditor() {
 
       // 게시물 Supabase 데이터베이스에 insert
       const postData = {
-        id: postId,
         post_contents: contents,
         post_imgs: [...previewUrls.filter((url) => url.startsWith('http')), ...imgUrls],
         user_id: user.id
       };
 
-      console.log('postData', postData);
-
       let result;
+
       if (isEditMode) {
         result = await supabase.from('posts').update(postData).eq('id', postId);
       } else {
@@ -202,14 +187,22 @@ function PostFormEditor() {
       const { data, error } = result;
       if (error) throw error;
 
-      alert('게시물이 성공적으로 업로드되었습니다.');
+      toast.success('게시물이 성공적으로 업로드되었습니다.', {
+        position: 'top-right'
+        // autoClose: 5000
+      });
+      // toast.success('게시물이 성공적으로 업로드되었습니다.');
       setContents('');
       setPostImages([]);
       setPreviewUrls([]);
-      navigate('/home'); // 게시물 업로드 성공 시 홈 페이지로 이동
+
+      // 어쩔수 없었다!
+      setTimeout(() => {
+        navigate('/home');
+      }, 1000);
     } catch (error) {
       console.error('게시물 업로드 오류 : ', error);
-      alert(`게시물 업로드를 실패했습니다: ${error.message}`);
+      toast.error(`게시물 업로드를 실패했습니다: ${error.message}`);
     }
   };
 
@@ -230,7 +223,7 @@ function PostFormEditor() {
   const onImageChange = (e) => {
     const files = Array.from(e.target.files);
     if (files.length + previewUrls.length > 3) {
-      alert('최대 3개의 이미지만 선택할 수 있습니다.');
+      toast.info('최대 3개의 이미지만 선택할 수 있습니다.');
       return;
     }
 
@@ -258,14 +251,19 @@ function PostFormEditor() {
     }
   };
 
-  // Cancel 버튼
-  const onCancel = () => {
-    console.log('취소버튼');
-    setContents('');
-    setPostImages([]);
-    setPreviewUrls([]);
-    navigate('/home'); // 홈 페이지로 이동
+  const handleDeleteImage = (e, index) => {
+    e.preventDefault(); // 이벤트의 기본 동작을 막습니다.
+    e.stopPropagation(); // 이벤트 버블링을 막습니다.
+
+    const newPreviewUrls = [...previewUrls];
+    newPreviewUrls.splice(index, 1);
+    setPreviewUrls(newPreviewUrls);
+
+    const newPostImages = [...postImages];
+    newPostImages.splice(index, 1);
+    setPostImages(newPostImages);
   };
+
   return (
     <>
       <PostForm onSubmit={onUpload}>
@@ -281,21 +279,14 @@ function PostFormEditor() {
             previewUrls.map((url, index) => (
               <PreviewImgContainer key={index}>
                 <PreviewImg src={url} alt={`Preview ${index + 1}`} />
-                <DeleteButton onClick={() => handleDeleteImage(index)}>X</DeleteButton>
+                <DeleteButton onClick={(e) => handleDeleteImage(e, index)}>X</DeleteButton>
               </PreviewImgContainer>
             ))
           ) : (
             <p>이미지를 선택하세요</p>
           )}
         </ImagePreview>
-        {/* <PostButton /> */}
-        <ButtonGroup>
-          <StyledButton color="#F4A460" type="button" onClick={onCancel}>
-            Cancel
-          </StyledButton>
-          {}
-          <StyledButton type="submit">{isEditMode ? 'Update' : 'Upload'}</StyledButton>
-        </ButtonGroup>
+        <PostButton />
       </PostForm>
     </>
   );
