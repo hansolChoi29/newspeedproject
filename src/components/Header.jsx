@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { supabase } from '../supabase/supabase';
 import { useNavigate } from 'react-router-dom';
-
 const HeaderStyle = styled.div`
   position: fixed;
   top: 0;
@@ -48,15 +47,13 @@ const MyPageStyle = styled.div`
   flex-direction: row;
 `;
 
-
 const ProfileImage = styled.div`
   img {
     width: 50px;
     height: 50px;
     object-fit: contain;
   }
-`
-
+`;
 function Header() {
 
   const [userProfile, setUserProfile] = useState({
@@ -67,18 +64,11 @@ function Header() {
   console.log(userProfile)
 
   const [user, setUser] = useState();
-  
-  //테스트용 id
-  // const 우석핑 = '9e351071-01b9-4827-b797-6685d3348072';
-  
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const {
-          data: { user }, // 여기 유저안의 아이디
-          error
-        } = await supabase.auth.getUser(); // 로그인이 되어 있는 유저
-        if (error) {
+        function Header() {
           console.error('Error fetching user:', error);
           return;
         }
@@ -108,9 +98,7 @@ function Header() {
     };
     fetchUserData();
   }, [supabase]);
-
   const navigate = useNavigate();
-
   async function signOut() {
     const { error } = await supabase.auth.signOut(); // Supabase 로그아웃 호출
     if (error) {
@@ -122,13 +110,11 @@ function Header() {
     navigate('/');
     return;
   }
-
   useEffect(() => {
     const checkSession = async () => {
       const { data } = await supabase.auth.getSession();
       const currentPath = location.pathname.toLowerCase(); // 현재 경로
       const allowedPaths = ['/findpassword', '/join', '/']; // 비로그인 상태에서 허용된 경로 ('/'가 로그인 페이지)
-
       if (!data?.session) {
         // 비로그인 상태
         if (!allowedPaths.includes(currentPath)) {
@@ -145,10 +131,8 @@ function Header() {
         }
       }
     };
-
     checkSession();
   }, [navigate, location.pathname]);
-
   return (
     <HeaderStyle>
       <HeaderInner>
