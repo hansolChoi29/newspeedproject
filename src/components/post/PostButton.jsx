@@ -12,7 +12,7 @@ const ButtonGroup = styled.div`
 `;
 
 function PostButton() {
-  const { setContents, setPostImages, setPreviewUrls, navigate } = useContext(PostContext);
+  const { setContents, setPostImages, setPreviewUrls, navigate, isEditMode } = useContext(PostContext);
 
   // Cancel 버튼
   const onCancel = () => {
@@ -35,6 +35,18 @@ function PostButton() {
       }
     });
   };
+
+  return (
+    <>
+      <ButtonGroup>
+        <StyledButton color="#F4A460" type="button" onClick={onCancel}>
+          Cancel
+        </StyledButton>
+        {}
+        <StyledButton type="submit">{isEditMode ? 'Update' : 'Upload'}</StyledButton>
+      </ButtonGroup>
+    </>
+  );
 }
 
 export default PostButton;
