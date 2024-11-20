@@ -4,7 +4,6 @@ import { supabase } from '../../supabase/supabase';
 import { PostContext } from '../../context/PostProvider';
 import PostButton from './PostButton';
 import { useParams } from 'react-router-dom';
-import StyledButton from '../../styles/StyledButton';
 
 const PostForm = styled.form`
   display: flex;
@@ -78,12 +77,6 @@ const FileInputLabel = styled.label`
   cursor: pointer;
   margin-bottom: 20px;
 `;
-const ButtonGroup = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 100px;
-  margin: 50px;
-`;
 
 const PreviewImgContainer = styled.div`
   position: relative;
@@ -115,6 +108,8 @@ function PostFormEditor() {
     getUser,
     postId,
     setPostId,
+    isEditMode,
+    setIsEditMode,
     contents,
     setContents,
     postImages,
@@ -124,16 +119,15 @@ function PostFormEditor() {
     navigate
   } = useContext(PostContext);
 
-  const [isEditMode, setIsEditMode] = useState(false);
-
-  const { id } = useParams(); // URL에서 게시물 ID를 가져옵니다.
+  // URL에서 postId 가져오기
+  const { id } = useParams();
 
   useEffect(() => {
     getUser();
   }, []);
 
   useEffect(() => {
-    console.log('useEffect', id);
+    console.log('useEffect_id', id);
     if (id && id !== ':id') {
       setIsEditMode(true);
       setPostId(id);
@@ -156,14 +150,6 @@ function PostFormEditor() {
     };
   }, [previewUrls]);
 
-  useEffect(() => {
-    if (id) {
-      setIsEditMode(true);
-      setPostId(id);
-      loadPostData(id);
-    }
-  }, [id]);
-
   const onChangeContent = (e) => {
     setContents(e.target.value);
   };
@@ -184,7 +170,6 @@ function PostFormEditor() {
 
       // 게시물 Supabase 데이터베이스에 insert
       const postData = {
-        id: postId,
         post_contents: contents,
         post_imgs: [...previewUrls.filter((url) => url.startsWith('http')), ...imgUrls],
         user_id: user.id
@@ -193,6 +178,7 @@ function PostFormEditor() {
       console.log('postData', postData);
 
       let result;
+
       if (isEditMode) {
         result = await supabase.from('posts').update(postData).eq('id', postId);
       } else {
@@ -258,14 +244,6 @@ function PostFormEditor() {
     }
   };
 
-  // Cancel 버튼
-  const onCancel = () => {
-    console.log('취소버튼');
-    setContents('');
-    setPostImages([]);
-    setPreviewUrls([]);
-    navigate('/home'); // 홈 페이지로 이동
-  };
   return (
     <>
       <PostForm onSubmit={onUpload}>
@@ -288,14 +266,7 @@ function PostFormEditor() {
             <p>이미지를 선택하세요</p>
           )}
         </ImagePreview>
-        {/* <PostButton /> */}
-        <ButtonGroup>
-          <StyledButton color="#F4A460" type="button" onClick={onCancel}>
-            Cancel
-          </StyledButton>
-          {}
-          <StyledButton type="submit">{isEditMode ? 'Update' : 'Upload'}</StyledButton>
-        </ButtonGroup>
+        <PostButton />
       </PostForm>
     </>
   );
