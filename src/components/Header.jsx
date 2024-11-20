@@ -4,12 +4,15 @@ import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { supabase } from '../supabase/supabase';
 import { useNavigate } from 'react-router-dom';
+import { AiOutlineLogout } from 'react-icons/ai';
+
 const HeaderStyle = styled.div`
   position: fixed;
   top: 0;
   width: 100%; /* 가로 너비 설정 */
   height: 50px;
-  
+  padding: 10px 0;
+
   background-color: #ffffff; /* (선택) 배경색 설정 */
   z-index: 10;
   a {
@@ -27,8 +30,7 @@ const HeaderStyle = styled.div`
     align-items: center;
   }
   button {
-    width: 70px;
-    border: 1px solid none;
+    cursor: pointer;
     background: none;
   }
 `;
@@ -40,11 +42,13 @@ const HeaderInner = styled.div`
   max-width: 800px;
   width: 100%;
   margin: 0 auto;
-`
+`;
 
 const MyPageStyle = styled.div`
   display: flex;
   flex-direction: row;
+  align-items: center;
+  gap: 10px;
 `;
 
 const ProfileImage = styled.div`
@@ -54,6 +58,23 @@ const ProfileImage = styled.div`
     object-fit: cover;
     border-radius: 50%; /* 이미지를 동그랗게 */
     border: 2px solid #ccc; /* 선택: 테두리를 추가 */
+  }
+`;
+
+const LogoutBtn = styled.button`
+  padding: 5px;
+  width: auto;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #333;
+  font-size: 14px;
+  font-weight: 700;
+  border: 1px solid #f4a460;
+  border-radius: 5px;
+  svg {
+    color: #f4a460;
+    font-size: 20px;
   }
 `;
 function Header() {
@@ -67,7 +88,10 @@ function Header() {
     const fetchUserData = async () => {
       try {
         // 현재 로그인된 유저 정보 가져오기
-        const { data: { user }, error } = await supabase.auth.getUser();
+        const {
+          data: { user },
+          error
+        } = await supabase.auth.getUser();
         if (error || !user) {
           console.error('Error fetching user:', error);
           return;
@@ -138,19 +162,22 @@ function Header() {
   return (
     <HeaderStyle>
       <HeaderInner>
-      <Link to="/home">
-        <LogoFontStyle>Voir le chemin</LogoFontStyle>
-      </Link>
-
-      <MyPageStyle>
-        <p>{userProfile.nickname}님 안녕하세요</p>
-        <button onClick={signOut}>로그아웃</button>
-        <Link to="/mypage">
-          <ProfileImage>
-            <img src={userProfile.profileImage} alt="프로필사진" />
-          </ProfileImage>
+        <Link to="/home">
+          <LogoFontStyle>Voir le chemin</LogoFontStyle>
         </Link>
-      </MyPageStyle>
+
+        <MyPageStyle>
+          <p>{userProfile.nickname}님 안녕하세요</p>
+          <Link to="/mypage">
+            <ProfileImage>
+              <img src={userProfile.profileImage} alt="프로필사진" />
+            </ProfileImage>
+          </Link>
+          <LogoutBtn type="button" onClick={signOut}>
+            <AiOutlineLogout />
+            로그아웃
+          </LogoutBtn>
+        </MyPageStyle>
       </HeaderInner>
     </HeaderStyle>
   );
