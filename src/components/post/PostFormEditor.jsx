@@ -1,9 +1,10 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import StyledButton from '../../styles/StyledButton';
 import { supabase } from '../../supabase/supabase';
 import { PostContext } from '../../context/PostProvider';
 import PostButton from './PostButton';
+import { useParams } from 'react-router-dom';
+import StyledButton from '../../styles/StyledButton';
 
 const PostForm = styled.form`
   display: flex;
@@ -41,23 +42,27 @@ const TextArea = styled.textarea`
 const ImagePreview = styled.div`
   width: 100%;
   max-width: 800px;
-  height: 200px;
+  min-height: 200px;
   border: 2px dashed #ccc;
   border-radius: 4px;
   display: flex;
   justify-content: center;
   align-items: center;
   margin-bottom: 20px;
-  overflow: hidden;
-  display: flex;
+  padding: 10px;
+  box-sizing: border-box;
   flex-wrap: wrap;
   gap: 10px;
 `;
 
 const PreviewImg = styled.img`
-  width: calc(33.33% - 10px);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
 `;
 
 const FileInput = styled.input`
@@ -73,11 +78,71 @@ const FileInputLabel = styled.label`
   cursor: pointer;
   margin-bottom: 20px;
 `;
+const ButtonGroup = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 100px;
+  margin: 50px;
+`;
+
+const PreviewImgContainer = styled.div`
+  position: relative;
+  width: calc(33.33% - 10px);
+  padding-top: calc(33.33% - 10px);
+  overflow: hidden;
+`;
+
+const DeleteButton = styled.button`
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: rgba(255, 255, 255, 0.7);
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 12px;
+  z-index: 1;
+`;
 
 function PostFormEditor() {
-  const { userId, setUserId, contents, setContents, postImages, setPostImages, previewUrls, setPreviewUrls, navigate } =
-    useContext(PostContext);
-  const 우석핑 = '9e351071-01b9-4827-b797-6685d3348072';
+  const {
+    user,
+    getUser,
+    postId,
+    setPostId,
+    contents,
+    setContents,
+    postImages,
+    setPostImages,
+    previewUrls,
+    setPreviewUrls,
+    navigate
+  } = useContext(PostContext);
+
+  const [isEditMode, setIsEditMode] = useState(false);
+
+  const { id } = useParams(); // URL에서 게시물 ID를 가져옵니다.
+
+  useEffect(() => {
+    getUser();
+  }, []);
+
+  useEffect(() => {
+    console.log('useEffect', id);
+    if (id && id !== ':id') {
+      setIsEditMode(true);
+      setPostId(id);
+      loadPostData(id);
+    } else {
+      setIsEditMode(false);
+      setPostId(null);
+    }
+  }, [id]);
 
   useEffect(() => {
     return () => {
@@ -90,6 +155,14 @@ function PostFormEditor() {
       previewUrls.forEach(URL.revokeObjectURL);
     };
   }, [previewUrls]);
+
+  useEffect(() => {
+    if (id) {
+      setIsEditMode(true);
+      setPostId(id);
+      loadPostData(id);
+    }
+  }, [id]);
 
   const onChangeContent = (e) => {
     setContents(e.target.value);
@@ -110,14 +183,23 @@ function PostFormEditor() {
       const imgUrls = await Promise.all(postImages.map(uploadImage));
 
       // 게시물 Supabase 데이터베이스에 insert
-      const { data, error } = await supabase.from('posts').insert([
-        {
-          post_contents: contents,
-          post_imgs: imgUrls,
-          user_id: 우석핑
-        }
-      ]);
+      const postData = {
+        id: postId,
+        post_contents: contents,
+        post_imgs: [...previewUrls.filter((url) => url.startsWith('http')), ...imgUrls],
+        user_id: user.id
+      };
 
+      console.log('postData', postData);
+
+      let result;
+      if (isEditMode) {
+        result = await supabase.from('posts').update(postData).eq('id', postId);
+      } else {
+        result = await supabase.from('posts').insert(postData);
+      }
+
+      const { data, error } = result;
       if (error) throw error;
 
       alert('게시물이 성공적으로 업로드되었습니다.');
@@ -131,11 +213,10 @@ function PostFormEditor() {
     }
   };
 
-  // 이미지 업로드 기능 (최대 3개 까지만 이미지업로드 가능)
+  // 이미지를 Supabase 스토리지에 업로드
   const uploadImage = async (imageFile) => {
     const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 
-    // 이미지를 Supabase 스토리지에 업로드
     const { data, error } = await supabase.storage.from('post-images').upload(fileName, imageFile);
     if (error) throw error;
 
@@ -145,18 +226,46 @@ function PostFormEditor() {
     return urlData.publicUrl;
   };
 
+  // 이미지 선택 및 미리보기를 처리
   const onImageChange = (e) => {
     const files = Array.from(e.target.files);
-    if (files.length + postImages.length > 3) {
+    if (files.length + previewUrls.length > 3) {
       alert('최대 3개의 이미지만 선택할 수 있습니다.');
       return;
     }
-    setPostImages((prevImages) => [...prevImages, ...files]);
 
-    // 선택된 이미지의 미리보기를 표시
-    setPreviewUrls((prevUrls) => [...prevUrls, ...files.map((file) => URL.createObjectURL(file))]);
+    const newPreviewUrls = files.map((file) => URL.createObjectURL(file));
+    setPreviewUrls((prevUrls) => [...prevUrls, ...newPreviewUrls]);
+    setPostImages((prevImages) => [...prevImages, ...files]);
   };
 
+  // 수정 모드일 때 기존 게시물 데이터를 불러오기
+  const loadPostData = async (postId) => {
+    if (!postId || postId === ':id') {
+      console.error('유효하지 않은 게시물 ID:', postId);
+      return;
+    }
+    try {
+      const { data, error } = await supabase.from('posts').select('*').eq('id', postId).single();
+
+      if (error) throw error;
+
+      console.log('loadPostData', data);
+      setContents(data.post_contents);
+      setPreviewUrls(data.post_imgs || []);
+    } catch (error) {
+      console.error('게시물 로드 오류:', error);
+    }
+  };
+
+  // Cancel 버튼
+  const onCancel = () => {
+    console.log('취소버튼');
+    setContents('');
+    setPostImages([]);
+    setPreviewUrls([]);
+    navigate('/home'); // 홈 페이지로 이동
+  };
   return (
     <>
       <PostForm onSubmit={onUpload}>
@@ -169,12 +278,24 @@ function PostFormEditor() {
         <FileInput id="file-input" type="file" accept="image/*" onChange={onImageChange} multiple />
         <ImagePreview>
           {previewUrls.length > 0 ? (
-            previewUrls.map((url, index) => <PreviewImg key={index} src={url} alt={`Preview ${index + 1}`} />)
+            previewUrls.map((url, index) => (
+              <PreviewImgContainer key={index}>
+                <PreviewImg src={url} alt={`Preview ${index + 1}`} />
+                <DeleteButton onClick={() => handleDeleteImage(index)}>X</DeleteButton>
+              </PreviewImgContainer>
+            ))
           ) : (
             <p>이미지를 선택하세요</p>
           )}
         </ImagePreview>
-        <PostButton />
+        {/* <PostButton /> */}
+        <ButtonGroup>
+          <StyledButton color="#F4A460" type="button" onClick={onCancel}>
+            Cancel
+          </StyledButton>
+          {}
+          <StyledButton type="submit">{isEditMode ? 'Update' : 'Upload'}</StyledButton>
+        </ButtonGroup>
       </PostForm>
     </>
   );
