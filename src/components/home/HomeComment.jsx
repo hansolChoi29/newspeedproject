@@ -6,7 +6,7 @@ import { FaPen, FaRegTrashAlt } from 'react-icons/fa';
 import { RiEditLine, RiCloseLargeFill } from 'react-icons/ri';
 import HomeUserProfile from './HomeUserProfile';
 
-const CommentWrapper = styled.div`
+const CommentWrapper = styled.form`
   position: relative;
   padding: 10px;
   border-bottom: 1px solid #ddd;
@@ -62,34 +62,33 @@ const CommentBtnBox = styled.div`
   }
 `;
 
-export default function HomeComment({ comment, updateComment, setComments }) {
+export default function HomeComment({ comment, setCommentsData }) {
   const [isEditing, setIsEditing] = useState(false);
   const [newCommentData, setNewCommentData] = useState(comment.comment_data);
   const [userProfile, setUserProfile] = useState({});
 
-  const fetchUserProfile = async (userId) => {
-    try {
-      const { data, error } = await supabase
-        .from('users')
-        .select('user_nick_name, user_profile_image')
-        .eq('id', userId)
-        .single();
-
-      if (error) {
-        console.error('사용자 정보 조회 오류:', error.message);
-        return;
-      }
-
-      setUserProfile(data);
-    } catch (error) {
-      console.error('사용자 정보 조회 오류:', error.message);
-    }
-  };
-
   useEffect(() => {
-    if (comment.user_id) {
-      fetchUserProfile(comment.user_id);
-    }
+    const fetchUserProfile = async (user_id) => {
+      if (user_id) {
+        try {
+          const { data, error } = await supabase
+            .from('users')
+            .select('user_nick_name, user_profile_image')
+            .eq('id', user_id)
+            .single();
+
+          if (error) {
+            console.error('사용자 정보 조회 오류:', error.message);
+          } else {
+            setUserProfile(data);
+          }
+        } catch (error) {
+          console.error('사용자 정보 조회 오류:', error.message);
+        }
+      }
+    };
+
+    fetchUserProfile(comment.user_id);
   }, [comment.user_id]);
 
   const handleEditClick = () => {
@@ -101,15 +100,29 @@ export default function HomeComment({ comment, updateComment, setComments }) {
     setNewCommentData(comment.comment_data);
   };
 
-  const handleSaveEdit = () => {
-    if (newCommentData.length === 0) {
+  const handleSaveEdit = async (e) => {
+    e.preventDefault();
+    if (newCommentData.trim().length === 0) {
       toast.error('댓글을 입력해주세요');
       return;
     }
-    if (newCommentData.trim() !== comment.comment_data) {
-      updateComment(comment.id, newCommentData);
+
+    try {
+      const { error } = await supabase.from('comments').update({ comment_data: newCommentData }).eq('id', comment.id);
+
+      if (error) {
+        toast.error('댓글 수정 오류: ' + error.message);
+        return;
+      }
+
+      setCommentsData((prevComments) =>
+        prevComments.map((c) => (c.id === comment.id ? { ...c, comment_data: newCommentData } : c))
+      );
+
+      setIsEditing(false);
+    } catch (error) {
+      console.error('댓글 수정 오류:', error.message);
     }
-    setIsEditing(false);
   };
 
   const handleDeleteClick = async () => {
@@ -118,35 +131,31 @@ export default function HomeComment({ comment, updateComment, setComments }) {
     if (confirmDelete) {
       try {
         const { error } = await supabase.from('comments').delete().eq('id', comment.id);
-
         if (error) {
           toast.error('댓글 삭제 오류: ' + error.message);
           return;
         }
 
-        setComments((prevComments) => prevComments.filter((c) => c.id !== comment.id));
         toast.success('댓글이 삭제되었습니다.');
+
+        setCommentsData((prevComments) => prevComments.filter((c) => c.id !== comment.id));
       } catch (error) {
-        toast.error('댓글 삭제 오류: ' + error.message);
+        console.error('댓글 삭제 오류:', error.message);
       }
-    } else {
-      toast.info('댓글 삭제가 취소되었습니다.');
     }
   };
 
   return (
-    <CommentWrapper>
+    <CommentWrapper onSubmit={handleSaveEdit}>
       <CommentContent>
         {isEditing ? (
-          <>
-            <input
-              type="text"
-              value={newCommentData}
-              onChange={(e) => setNewCommentData(e.target.value)}
-              autoFocus
-              required
-            />
-          </>
+          <input
+            type="text"
+            value={newCommentData}
+            onChange={(e) => setNewCommentData(e.target.value)}
+            autoFocus
+            required
+          />
         ) : (
           <>
             <HomeUserProfile
@@ -161,10 +170,10 @@ export default function HomeComment({ comment, updateComment, setComments }) {
       </CommentContent>
       {isEditing ? (
         <CommentEditBtnbox>
-          <button onClick={handleSaveEdit}>
+          <button type="submit">
             <RiEditLine />
           </button>
-          <button onClick={handleCancelEdit}>
+          <button type="button" onClick={handleCancelEdit}>
             <RiCloseLargeFill />
           </button>
         </CommentEditBtnbox>
