@@ -3,11 +3,7 @@ import styled from 'styled-components';
 import { supabase } from '../../supabase/supabase';
 import { PostContext } from '../../context/PostProvider';
 import PostButton from './PostButton';
-import { useParams } from 'react-router-dom';
-<<<<<<< HEAD
 import { toast } from 'react-toastify';
-=======
->>>>>>> 1074c0a73499f98f3339613b86aa3eb9415e63d6
 
 const PostForm = styled.form`
   display: flex;

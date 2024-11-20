@@ -48,9 +48,7 @@ export default function PostProvider({ children }) {
         setPostImages,
         previewUrls,
         setPreviewUrls,
-        navigate,
-        isEditMode,
-        setIsEditMode
+        navigate
       }}
     >
       {children}
