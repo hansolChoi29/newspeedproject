@@ -8,10 +8,10 @@
 |Mypage|Home|Join|Login|Header,Footer|CreatePost|
 
 ## 📖 목차
-0. [PROJECT 목표](#PROJECT 목표)
-4. [PROJECT 구조](#PROJECT 구조)
-2. [컴포넌트 별 기능구현](#컴포넌트 별 기능구현)
-1. [주요기능](#전반적인 주요기능)
+0. [PROJECT 목표](#PROJECT-목표)
+4. [PROJECT 구조](#PROJECT-구조)
+2. [컴포넌트 별 기능구현](#컴포넌트-별-기능구현)
+1. [주요기능](#전반적인-주요기능)
 3. [개발기간](#개발기간)
 4. [기술스택](#기술스택)
 5. [와이어프레임](#와이어프레임)
