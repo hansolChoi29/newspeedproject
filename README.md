@@ -14,13 +14,32 @@
 11. [프로젝트 파일 구조](#프로젝트-파일-구조)
 12. [Trouble Shooting](#trouble-shooting)
     
-## 👨‍🏫 프로젝트 소개
+## PROJECT: Voir le chemin (길을 보다)
 
 
-## 팀소개
+
+## PROJECT 목표
+- `styled-components`를 이용한 고도화된 컴포넌트 스타일링 기법
+-  `context API`를 이용한 리액트 전역상태 관리 방법
+- `react-router-dom`을 이용한 라우팅 기법
+## 기술
+![Context-API](https://img.shields.io/badge/Context--Api-000000?style=for-the-badge&logo=react)
+![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)
+![Git](https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white)
+![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+
+## PROJECT 구조
+
+![title](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FKHMnO%2FbtsKQyj5sCV%2FY4V1TGBRTjjKWIngOLq2F1%2Fimg.png)   
 
 
-## 프로젝트 계기
+
+
+## PROJECT 기능
+- mypage
+
+
+
 
 
 ## 💜 주요기능
