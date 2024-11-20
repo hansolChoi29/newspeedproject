@@ -1,4 +1,4 @@
-# 프로젝트 이름
+## PROJECT: Voir le chemin (길을 보다)
 
 ## 📖 목차
 1. [프로젝트 소개](#프로젝트-소개)
@@ -14,7 +14,7 @@
 11. [프로젝트 파일 구조](#프로젝트-파일-구조)
 12. [Trouble Shooting](#trouble-shooting)
     
-## PROJECT: Voir le chemin (길을 보다)
+
 
 
 
