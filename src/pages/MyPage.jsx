@@ -6,6 +6,7 @@ import Pencil from '../assets/Pencil.png';
 import hart from '../assets/hart.png';
 import { supabase } from '../supabase/supabase';
 import history from '../assets/history.png';
+import { DiErlang } from 'react-icons/di';
 
 const Container = styled.form`
   width: 600px;
@@ -148,7 +149,7 @@ const MyPage = () => {
         setLoading(true);
         setError(null);
 
-        // 로그인 상태 확인 (주석 처리 유지)
+        // 로그인 상태 확인
         const {
           data: { session },
           error: sessionError
@@ -159,50 +160,53 @@ const MyPage = () => {
         const user = session?.user;
         if (!user) throw new Error('User is not logged in');
 
-        // 1. 유저 데이터 가져오기
+        // 유저 데이터 가져오기
         const { data: userData, error: userError } = await supabase
           .from('users')
-          .select('user_profile_image, user_nick_name') // 정확한 컬럼 이름 확인 필요
+          .select('user_profile_image, user_nick_name')
           .eq('id', user.id)
           .single();
 
         if (userError) throw userError;
 
-        // console.log('Fetched User Data:', userData);
-        const profileimgUrl = JSON.parse(userData.user_profile_image);
-        setProfileImage(profileimgUrl.publicUrl || myprofile); // 이미지가 없으면 기본 이미지로 설정
-        setNickname(userData.user_nick_name || '닉네임 없음'); // 닉네임이 없으면 기본값 설정
+        // 프로필 이미지 처리
+        let profileImgUrl = userData.user_profile_image;
+        try {
+          // JSON 형식일 경우 파싱
+          profileImgUrl = JSON.parse(userData.user_profile_image).publicUrl;
+        } catch (parseError) {
+          // JSON 형식이 아니면 그대로 사용
+          console.warn('Profile image is not JSON, using raw URL.');
+        }
+
+        setProfileImage(profileImgUrl || myprofile); // 기본 프로필 설정
+        setNickname(userData.user_nick_name || '닉네임 없음');
         setPostNickname(userData.user_nick_name || '닉네임 없음');
-        // 2. 게시글 데이터 가져오기
+
+        // 게시글 데이터 가져오기
         const { data: postsData, error: postsError } = await supabase
           .from('posts')
           .select('post_contents')
           .eq('user_id', user.id);
 
         if (postsError) throw postsError;
-        // 상태 업데이트: 게시글 데이터 설정
-        setPosts(postsData);
-        // console.log('Fetched Posts Data:', postsData);
+        setPosts(postsData || []);
 
-        // 3. 좋아요 데이터 가져오기
+        // 좋아요 데이터 가져오기
         const { data: likesData, error: likesError } = await supabase
           .from('likes')
           .select('likes_count')
           .eq('user_id', user.id);
 
         if (likesError) throw likesError;
-        // console.log('Fetched Likes Data:', likesData);
 
         const totalLikes = likesData.reduce((sum, like) => sum + like.likes_count, 0);
-
-        // 상태 업데이트
-        setPosts(postsData || []); // 게시글 상태 업데이트
-        setTotalLikes(totalLikes); // 좋아요 총합 업데이트
+        setTotalLikes(totalLikes);
       } catch (err) {
         console.error('Error in fetchData:', err.message);
-        setError(err.message); // 에러 상태 업데이트
+        setError(err.message);
       } finally {
-        setLoading(false); // 로딩 상태 해제
+        setLoading(false);
       }
     };
 
@@ -225,13 +229,15 @@ const MyPage = () => {
         .from('users') // 'users' 테이블에서
         .update({ user_nick_name: nickname }) // 닉네임 업데이트
         .eq('id', user.id); // 로그인된 사용자의 ID와 일치하는 행 선택
-
+      if (!nickname) {
+        alert('닉네임을 입력해주세요!');
+        return;
+      }
       // 업데이트 중 에러가 발생했을 경우 처리
       if (error) throw error;
       setPostNickname(nickname); // 닉네임 변경 후 게시글 닉네임 업데이트
       // 수정 상태 종료
       setIsEditing(false);
-      alert('닉네임이 저장되었습니다.');
     } catch (err) {
       // 에러 발생 시 에러 메시지 상태로 설정
       setError(err.message);
@@ -241,58 +247,50 @@ const MyPage = () => {
   const handleProfileImageChange = async (e) => {
     const file = e.target.files[0];
 
-    console.log('Profile Image URL:', profileImage);
-    console.log(file);
     if (!file) {
       alert('파일을 선택해주세요.');
       return;
     }
 
     try {
-      // 세션 가져오기
+      // Supabase 세션 가져오기
       const {
         data: { session }
       } = await supabase.auth.getSession();
-      console.log(session);
       const user = session?.user;
       if (!user) throw new Error('User is not logged in.');
 
+      // 고유 파일 이름 생성
+      const uniqueFileName = `${user.id}_${Date.now()}`;
+      const fileExtension = file.name.split('.').pop(); // 확장자 추출
+      const finalFileName = `${uniqueFileName}.${fileExtension}`; // Supabase가 허용하는 파일 이름
+
       // 파일 업로드
-      const fileName = `${user.id}_${Date.now()}_${file.name}`;
-      const { data: uploadedFile, error: uploadError } = await supabase.storage.from('avatars').upload(fileName, file);
+      const { data: uploadedFile, error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(finalFileName, file);
 
       if (uploadError) {
         console.error('Upload Error:', uploadError.message);
-        alert('파일 업로드에 실패했습니다.');
+        alert(`파일 업로드에 실패했습니다: ${uploadError.message}`);
         return;
       }
 
-      console.log('Uploaded File Data:', uploadedFile);
+      // Public URL 생성
+      const { data: publicUrl, error: urlError } = supabase.storage.from('avatars').getPublicUrl(uploadedFile.path);
 
-      // 👉 여기서 fullFilePath 생성
-      const fullFilePath = `${uploadedFile.path}`;
-      console.log('Full File Path:', fullFilePath);
-
-      // 👉 Public URL 생성
-      const { data: publicUrl, error: urlError } = supabase.storage.from('avatars').getPublicUrl(fullFilePath);
-      console.log(publicUrl);
-      // 👉 Public URL 검증
       if (urlError) {
         console.error('URL Error:', urlError.message);
         alert('Public URL 생성에 실패했습니다.');
         return;
-      } else if (!publicUrl) {
-        console.error('Public URL is undefined');
-        alert('공개 URL이 생성되지 않았습니다.');
-        return;
       }
 
-      console.log('Generated Public URL:', publicUrl);
-
-      // DB 업데이트
+      // 기존 DB 업데이트 로직 사용
       const { error: updateError } = await supabase
         .from('users')
-        .update({ user_profile_image: publicUrl })
+        .update({
+          user_profile_image: publicUrl.publicUrl
+        })
         .eq('id', user.id);
 
       if (updateError) {
@@ -302,21 +300,25 @@ const MyPage = () => {
       }
 
       // 상태 업데이트
-      setProfileImage(publicUrl);
-      alert('프로필 이미지가 성공적으로 저장되었습니다.');
+      setProfileImage(publicUrl.publicUrl);
+      alert(`프로필 이미지가 성공적으로 저장되었습니다: ${file.name}`);
     } catch (err) {
       console.error('Error in handleProfileImageChange:', err.message);
-      setError(err.message);
+      alert('프로필 이미지 업로드 중 오류가 발생했습니다.');
     }
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault(); // 폼의 기본 동작 방지
+    handleNicknameSave(); // 닉네임 저장 호출
+  };
   const focusNicknameInput = () => {
     setIsEditing(true);
     if (nicknameInputRef.current) nicknameInputRef.current.focus();
   };
 
   return (
-    <Container>
+    <Container onSubmit={handleSubmit}>
       <Section>
         <ProfileImage src={profileImage} alt="Profile" />
         <FileInputLabel as="label" htmlFor="file-upload" />

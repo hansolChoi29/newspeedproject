@@ -7,8 +7,8 @@ import whaleImg from '../image/LoginWhaleImg.png';
 import { supabase } from '../supabase/supabase';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Button from '../components/login/button';
-import Loginpassword from '../components/login/input';
+import Button from '../components/login/Button';
+import Loginpassword from '../components/login/Input';
 
 const LoginPasswoardStyle = styled.form`
   display: flex;
