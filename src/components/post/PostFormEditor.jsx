@@ -244,6 +244,19 @@ function PostFormEditor() {
     }
   };
 
+  const handleDeleteImage = (e, index) => {
+    e.preventDefault(); // 이벤트의 기본 동작을 막습니다.
+    e.stopPropagation(); // 이벤트 버블링을 막습니다.
+
+    const newPreviewUrls = [...previewUrls];
+    newPreviewUrls.splice(index, 1);
+    setPreviewUrls(newPreviewUrls);
+
+    const newPostImages = [...postImages];
+    newPostImages.splice(index, 1);
+    setPostImages(newPostImages);
+  };
+
   return (
     <>
       <PostForm onSubmit={onUpload}>
@@ -259,7 +272,7 @@ function PostFormEditor() {
             previewUrls.map((url, index) => (
               <PreviewImgContainer key={index}>
                 <PreviewImg src={url} alt={`Preview ${index + 1}`} />
-                <DeleteButton onClick={() => handleDeleteImage(index)}>X</DeleteButton>
+                <DeleteButton onClick={(e) => handleDeleteImage(e, index)}>X</DeleteButton>
               </PreviewImgContainer>
             ))
           ) : (
