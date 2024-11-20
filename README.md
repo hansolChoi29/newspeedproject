@@ -15,8 +15,7 @@
 5. [기술스택](#기술스택)
 6. [와이어프레임](#와이어프레임)
 7. [ERD](#ERD)
-8. [프로젝트 파일 구조](#프로젝트-파일-구조)
-9. [Trouble Shooting](#trouble-shooting)
+8. [Trouble Shooting](#trouble-shooting)
     
 
 
@@ -77,7 +76,6 @@
 ## ERD
 ![title](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fq9EOm%2FbtsKQ43NT2w%2FupJAB8FcbXrfziXdFM3dEK%2Fimg.png)
 
-## 프로젝트 파일 구조
 
 
 
