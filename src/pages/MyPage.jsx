@@ -6,7 +6,8 @@ import Pencil from '../assets/Pencil.png';
 import hart from '../assets/hart.png';
 import { supabase } from '../supabase/supabase';
 import history from '../assets/history.png';
-import { DiErlang } from 'react-icons/di';
+import 'react-toastify/dist/ReactToastify.css';
+import { toast, ToastContainer } from 'react-toastify';
 
 const Container = styled.form`
   width: 600px;
@@ -138,8 +139,8 @@ const MyPage = () => {
   const [totalLikes, setTotalLikes] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [inputNickname, setInputNickname] = useState(''); // 입력 필드 상태
-  const [postNickname, setPostNickname] = useState(''); // 게시글에서 보여지는 닉네임
+  const [inputNickname, setInputNickname] = useState('');
+  const [postNickname, setPostNickname] = useState('');
 
   const nicknameInputRef = useRef(null);
 
@@ -149,7 +150,6 @@ const MyPage = () => {
         setLoading(true);
         setError(null);
 
-        // 로그인 상태 확인
         const {
           data: { session },
           error: sessionError
@@ -160,7 +160,6 @@ const MyPage = () => {
         const user = session?.user;
         if (!user) throw new Error('User is not logged in');
 
-        // 유저 데이터 가져오기
         const { data: userData, error: userError } = await supabase
           .from('users')
           .select('user_profile_image, user_nick_name')
@@ -169,21 +168,17 @@ const MyPage = () => {
 
         if (userError) throw userError;
 
-        // 프로필 이미지 처리
         let profileImgUrl = userData.user_profile_image;
         try {
-          // JSON 형식일 경우 파싱
           profileImgUrl = JSON.parse(userData.user_profile_image).publicUrl;
         } catch (parseError) {
-          // JSON 형식이 아니면 그대로 사용
           console.warn('Profile image is not JSON, using raw URL.');
         }
 
-        setProfileImage(profileImgUrl || myprofile); // 기본 프로필 설정
+        setProfileImage(profileImgUrl || myprofile);
         setNickname(userData.user_nick_name || '닉네임 없음');
         setPostNickname(userData.user_nick_name || '닉네임 없음');
 
-        // 게시글 데이터 가져오기
         const { data: postsData, error: postsError } = await supabase
           .from('posts')
           .select('post_contents')
@@ -192,7 +187,6 @@ const MyPage = () => {
         if (postsError) throw postsError;
         setPosts(postsData || []);
 
-        // 좋아요 데이터 가져오기
         const { data: likesData, error: likesError } = await supabase
           .from('likes')
           .select('likes_count')
@@ -215,31 +209,24 @@ const MyPage = () => {
 
   const handleNicknameSave = async () => {
     try {
-      // Supabase 세션 가져오기
       const {
         data: { session }
       } = await supabase.auth.getSession();
 
-      // 세션에서 로그인된 사용자 정보 가져오기
       const user = session?.user;
-      if (!user) throw new Error('User is not logged in.'); // 로그인이 안 된 경우 예외 발생
+      if (!user) throw new Error('User is not logged in.');
 
-      // 'users' 테이블에 닉네임 업데이트
-      const { error } = await supabase
-        .from('users') // 'users' 테이블에서
-        .update({ user_nick_name: nickname }) // 닉네임 업데이트
-        .eq('id', user.id); // 로그인된 사용자의 ID와 일치하는 행 선택
+      const { error } = await supabase.from('users').update({ user_nick_name: nickname }).eq('id', user.id);
       if (!nickname) {
-        alert('닉네임을 입력해주세요!');
+        toast('닉네임을 입력해주세요!');
         return;
       }
-      // 업데이트 중 에러가 발생했을 경우 처리
+
       if (error) throw error;
-      setPostNickname(nickname); // 닉네임 변경 후 게시글 닉네임 업데이트
-      // 수정 상태 종료
+      setPostNickname(nickname);
+
       setIsEditing(false);
     } catch (err) {
-      // 에러 발생 시 에러 메시지 상태로 설정
       setError(err.message);
     }
   };
@@ -248,44 +235,39 @@ const MyPage = () => {
     const file = e.target.files[0];
 
     if (!file) {
-      alert('파일을 선택해주세요.');
+      toast('파일을 선택해주세요.');
       return;
     }
 
     try {
-      // Supabase 세션 가져오기
       const {
         data: { session }
       } = await supabase.auth.getSession();
       const user = session?.user;
       if (!user) throw new Error('User is not logged in.');
 
-      // 고유 파일 이름 생성
       const uniqueFileName = `${user.id}_${Date.now()}`;
-      const fileExtension = file.name.split('.').pop(); // 확장자 추출
-      const finalFileName = `${uniqueFileName}.${fileExtension}`; // Supabase가 허용하는 파일 이름
+      const fileExtension = file.name.split('.').pop();
+      const finalFileName = `${uniqueFileName}.${fileExtension}`;
 
-      // 파일 업로드
       const { data: uploadedFile, error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(finalFileName, file);
 
       if (uploadError) {
         console.error('Upload Error:', uploadError.message);
-        alert(`파일 업로드에 실패했습니다: ${uploadError.message}`);
+        toast(`파일 업로드에 실패했습니다: ${uploadError.message}`);
         return;
       }
 
-      // Public URL 생성
       const { data: publicUrl, error: urlError } = supabase.storage.from('avatars').getPublicUrl(uploadedFile.path);
 
       if (urlError) {
         console.error('URL Error:', urlError.message);
-        alert('Public URL 생성에 실패했습니다.');
+        toast('Public URL 생성에 실패했습니다.');
         return;
       }
 
-      // 기존 DB 업데이트 로직 사용
       const { error: updateError } = await supabase
         .from('users')
         .update({
@@ -295,22 +277,22 @@ const MyPage = () => {
 
       if (updateError) {
         console.error('DB Update Error:', updateError.message);
-        alert('프로필 이미지 업데이트에 실패했습니다.');
+        toast('프로필 이미지 업데이트에 실패했습니다.');
         return;
       }
 
       // 상태 업데이트
       setProfileImage(publicUrl.publicUrl);
-      alert(`프로필 이미지가 성공적으로 저장되었습니다: ${file.name}`);
+      toast(`프로필 이미지가 성공적으로 저장되었습니다: ${file.name}`);
     } catch (err) {
       console.error('Error in handleProfileImageChange:', err.message);
-      alert('프로필 이미지 업로드 중 오류가 발생했습니다.');
+      toast('프로필 이미지 업로드 중 오류가 발생했습니다.');
     }
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault(); // 폼의 기본 동작 방지
-    handleNicknameSave(); // 닉네임 저장 호출
+    e.preventDefault();
+    handleNicknameSave();
   };
   const focusNicknameInput = () => {
     setIsEditing(true);
@@ -318,47 +300,50 @@ const MyPage = () => {
   };
 
   return (
-    <Container onSubmit={handleSubmit}>
-      <Section>
-        <ProfileImage src={profileImage} alt="Profile" />
-        <FileInputLabel as="label" htmlFor="file-upload" />
-        <FileInput id="file-upload" type="file" accept="image/*" onChange={handleProfileImageChange} />
-        <NicknameContainer>
-          {isEditing ? (
-            <InputNickname
-              type="text"
-              value={nickname}
-              onChange={(e) => setNickname(e.target.value)}
-              ref={nicknameInputRef}
-              onBlur={handleNicknameSave}
-              onKeyDown={(e) => e.key === 'Enter' && handleNicknameSave()}
-              autoFocus
-            />
-          ) : (
-            <Nickname>{nickname || '닉네임 없음'}</Nickname>
-          )}
-          <PencilIcon src={Pencil} alt="Edit" onClick={focusNicknameInput} />
-        </NicknameContainer>
-        <Divider />
-      </Section>
-      <LikesSection>
-        <History src={hart} alt="Likes" width="30px" /> 좋아요 수
-        <h2>
-          <span>{totalLikes}</span>
-        </h2>
-      </LikesSection>
-      <PostList>
-        <StyledText>
-          <History src={history} alt="history" /> 내가 쓴 게시글
-        </StyledText>
-        {posts.slice(0, 3).map((post, index) => (
-          <Post key={index}>
-            <PostAuthor>{postNickname}</PostAuthor>
-            <div>{post.post_contents}</div>
-          </Post>
-        ))}
-      </PostList>
-    </Container>
+    <>
+      <ToastContainer />
+      <Container onSubmit={handleSubmit}>
+        <Section>
+          <ProfileImage src={profileImage} alt="Profile" />
+          <FileInputLabel as="label" htmlFor="file-upload" />
+          <FileInput id="file-upload" type="file" accept="image/*" onChange={handleProfileImageChange} />
+          <NicknameContainer>
+            {isEditing ? (
+              <InputNickname
+                type="text"
+                value={nickname}
+                onChange={(e) => setNickname(e.target.value)}
+                ref={nicknameInputRef}
+                onBlur={handleNicknameSave}
+                onKeyDown={(e) => e.key === 'Enter' && handleNicknameSave()}
+                autoFocus
+              />
+            ) : (
+              <Nickname>{nickname || '닉네임 없음'}</Nickname>
+            )}
+            <PencilIcon src={Pencil} alt="Edit" onClick={focusNicknameInput} />
+          </NicknameContainer>
+          <Divider />
+        </Section>
+        <LikesSection>
+          <History src={hart} alt="Likes" width="30px" /> 좋아요 수
+          <h2>
+            <span>{totalLikes}</span>
+          </h2>
+        </LikesSection>
+        <PostList>
+          <StyledText>
+            <History src={history} alt="history" /> 내가 쓴 게시글
+          </StyledText>
+          {posts.slice(0, 3).map((post, index) => (
+            <Post key={index}>
+              <PostAuthor>{postNickname}</PostAuthor>
+              <div>{post.post_contents}</div>
+            </Post>
+          ))}
+        </PostList>
+      </Container>
+    </>
   );
 };
 
