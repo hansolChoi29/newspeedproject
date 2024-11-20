@@ -6,7 +6,8 @@ import Pencil from '../assets/Pencil.png';
 import hart from '../assets/hart.png';
 import { supabase } from '../supabase/supabase';
 import history from '../assets/history.png';
-import { DiErlang } from 'react-icons/di';
+import 'react-toastify/dist/ReactToastify.css';
+import { toast, ToastContainer } from 'react-toastify';
 
 const Container = styled.form`
   width: 600px;
@@ -230,7 +231,7 @@ const MyPage = () => {
         .update({ user_nick_name: nickname }) // 닉네임 업데이트
         .eq('id', user.id); // 로그인된 사용자의 ID와 일치하는 행 선택
       if (!nickname) {
-        alert('닉네임을 입력해주세요!');
+        toast('닉네임을 입력해주세요!');
         return;
       }
       // 업데이트 중 에러가 발생했을 경우 처리
@@ -248,7 +249,7 @@ const MyPage = () => {
     const file = e.target.files[0];
 
     if (!file) {
-      alert('파일을 선택해주세요.');
+      toast('파일을 선택해주세요.');
       return;
     }
 
@@ -272,7 +273,7 @@ const MyPage = () => {
 
       if (uploadError) {
         console.error('Upload Error:', uploadError.message);
-        alert(`파일 업로드에 실패했습니다: ${uploadError.message}`);
+        toast(`파일 업로드에 실패했습니다: ${uploadError.message}`);
         return;
       }
 
@@ -281,7 +282,7 @@ const MyPage = () => {
 
       if (urlError) {
         console.error('URL Error:', urlError.message);
-        alert('Public URL 생성에 실패했습니다.');
+        toast('Public URL 생성에 실패했습니다.');
         return;
       }
 
@@ -295,16 +296,16 @@ const MyPage = () => {
 
       if (updateError) {
         console.error('DB Update Error:', updateError.message);
-        alert('프로필 이미지 업데이트에 실패했습니다.');
+        toast('프로필 이미지 업데이트에 실패했습니다.');
         return;
       }
 
       // 상태 업데이트
       setProfileImage(publicUrl.publicUrl);
-      alert(`프로필 이미지가 성공적으로 저장되었습니다: ${file.name}`);
+      toast(`프로필 이미지가 성공적으로 저장되었습니다: ${file.name}`);
     } catch (err) {
       console.error('Error in handleProfileImageChange:', err.message);
-      alert('프로필 이미지 업로드 중 오류가 발생했습니다.');
+      toast('프로필 이미지 업로드 중 오류가 발생했습니다.');
     }
   };
 
@@ -318,47 +319,50 @@ const MyPage = () => {
   };
 
   return (
-    <Container onSubmit={handleSubmit}>
-      <Section>
-        <ProfileImage src={profileImage} alt="Profile" />
-        <FileInputLabel as="label" htmlFor="file-upload" />
-        <FileInput id="file-upload" type="file" accept="image/*" onChange={handleProfileImageChange} />
-        <NicknameContainer>
-          {isEditing ? (
-            <InputNickname
-              type="text"
-              value={nickname}
-              onChange={(e) => setNickname(e.target.value)}
-              ref={nicknameInputRef}
-              onBlur={handleNicknameSave}
-              onKeyDown={(e) => e.key === 'Enter' && handleNicknameSave()}
-              autoFocus
-            />
-          ) : (
-            <Nickname>{nickname || '닉네임 없음'}</Nickname>
-          )}
-          <PencilIcon src={Pencil} alt="Edit" onClick={focusNicknameInput} />
-        </NicknameContainer>
-        <Divider />
-      </Section>
-      <LikesSection>
-        <History src={hart} alt="Likes" width="30px" /> 좋아요 수
-        <h2>
-          <span>{totalLikes}</span>
-        </h2>
-      </LikesSection>
-      <PostList>
-        <StyledText>
-          <History src={history} alt="history" /> 내가 쓴 게시글
-        </StyledText>
-        {posts.slice(0, 3).map((post, index) => (
-          <Post key={index}>
-            <PostAuthor>{postNickname}</PostAuthor>
-            <div>{post.post_contents}</div>
-          </Post>
-        ))}
-      </PostList>
-    </Container>
+    <>
+      <ToastContainer />
+      <Container onSubmit={handleSubmit}>
+        <Section>
+          <ProfileImage src={profileImage} alt="Profile" />
+          <FileInputLabel as="label" htmlFor="file-upload" />
+          <FileInput id="file-upload" type="file" accept="image/*" onChange={handleProfileImageChange} />
+          <NicknameContainer>
+            {isEditing ? (
+              <InputNickname
+                type="text"
+                value={nickname}
+                onChange={(e) => setNickname(e.target.value)}
+                ref={nicknameInputRef}
+                onBlur={handleNicknameSave}
+                onKeyDown={(e) => e.key === 'Enter' && handleNicknameSave()}
+                autoFocus
+              />
+            ) : (
+              <Nickname>{nickname || '닉네임 없음'}</Nickname>
+            )}
+            <PencilIcon src={Pencil} alt="Edit" onClick={focusNicknameInput} />
+          </NicknameContainer>
+          <Divider />
+        </Section>
+        <LikesSection>
+          <History src={hart} alt="Likes" width="30px" /> 좋아요 수
+          <h2>
+            <span>{totalLikes}</span>
+          </h2>
+        </LikesSection>
+        <PostList>
+          <StyledText>
+            <History src={history} alt="history" /> 내가 쓴 게시글
+          </StyledText>
+          {posts.slice(0, 3).map((post, index) => (
+            <Post key={index}>
+              <PostAuthor>{postNickname}</PostAuthor>
+              <div>{post.post_contents}</div>
+            </Post>
+          ))}
+        </PostList>
+      </Container>
+    </>
   );
 };
 
