@@ -4,7 +4,7 @@ import StyledButton from '../../styles/StyledButton';
 
 // const StyledButton = styled.button``;
 
-const LoginPasswoard = styled.form`
+const LoginPasswoard = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -20,7 +20,7 @@ const Button = ({ loginUser, handleSingup, loginText = '로그인', signupText =
     <LoginPasswoard>
       <StyledButton
         style={{ margin: '20px', width: '300px', height: '70px', marginTop: '50px' }}
-        type="button"
+        type="submit"
         onClick={loginUser}
       >
         {loginText}

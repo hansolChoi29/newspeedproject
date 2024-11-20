@@ -119,12 +119,17 @@ function Login() {
         <LoginCard style={{ height: '100vh' }}>
           <StyledSection>
             <LogoFontStyle>
-              <h1 style={{ marginTop: '30px', fontSize: '45px' }}>Voir le chemin</h1>
+              <p style={{ marginTop: '30px', fontSize: '45px' }}>Voir le chemin</p>
             </LogoFontStyle>
 
             <Loginpassword email={email} setEmail={setEmail} password={password} setPassword={setPassword} />
 
-            <LoginPasswoardStyle>
+            <LoginPasswoardStyle
+              onSubmit={(e) => {
+                e.preventDefault();
+                loginUser();
+              }}
+            >
               <P onClick={FindPasswordPage}>패스워드를 잊으셨나요?</P>
               <Button loginUser={loginUser} handleSingup={handleSingup} loginText="로그인" signupText="회원가입" />
             </LoginPasswoardStyle>
