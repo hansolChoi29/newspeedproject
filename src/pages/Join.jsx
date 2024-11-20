@@ -6,12 +6,13 @@ import styled from 'styled-components';
 import StyledButton from '../styles/StyledButton';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import JoinInput from '../components/join/JoinInput'
 
 const JoinCard = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-
+  height: 100vh; 
   section {
     background-color: white;
     box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.3);
@@ -27,14 +28,6 @@ const JoinPasswoard = styled.form`
   height: 550px;
   box-sizing: border-box;
   padding: 30px;
-  & input {
-    width: 260px;
-    height: 70px;
-    border-color: #ecebeb;
-    box-sizing: border-box;
-    text-align: center;
-    margin-top: 20px;
-  }
 `;
 const StyledSection = styled.div`
   height: 630px;
@@ -42,15 +35,16 @@ const StyledSection = styled.div`
   background-color: white;
 `;
 
-const Label = styled.label`
-  display: block;
-  margin-top: 10px;
-  font-size: 13px;
-`;
-
 const BackgroundColor = styled.div`
   background-image: linear-gradient(to right top, #87ceeb, #96dce0, #b4e6d6, #d7eed4, #f5f5dc);
+  height: 100vh;
+
 `;
+
+const Title = styled.h1`
+  margin-top: 20px; 
+  font-size: 45px;
+`
 
 function Join() {
   const [email, setEmail] = useState('');
@@ -90,7 +84,7 @@ function Join() {
     e.preventDefault();
 
     if (!email.trim()) {
-      toast.error('이메일을 입력하세요');
+      toast.error('네이버 이메일 주소를 입력하세요.');
       return;
     }
 
@@ -128,7 +122,7 @@ function Join() {
       const { data: duplicateNickname, error: nicknameCheckError } = await supabase
         .from('users')
         .select('user_nick_name')
-        .eq('user_nick_name', nickname.trim().toLowerCase());
+        .eq('user_nick_name', nickname.trim());
 
       console.log('Duplicate Nickname Check:', duplicateNickname);
 
@@ -199,40 +193,23 @@ function Join() {
   return (
     <>
       <ToastContainer />
-      <BackgroundColor style={{ height: '100vh' }}>
-        <JoinCard style={{ height: '100vh' }}>
+      <BackgroundColor>
+        <JoinCard>
           <StyledSection>
             <LogoFontStyle>
-              <h1 style={{ marginTop: '30px', fontSize: '45px' }}>Voir le chemin</h1>
+              <Title>Voir le chemin</Title>
             </LogoFontStyle>
             <JoinPasswoard>
-              <Label>이메일</Label>
-              <input type="email" placeholder="이메일을 입력해주세요" value={email} onChange={onChangeEmail}></input>
-
-              <Label>비밀번호</Label>
-              <input
-                type="password"
-                placeholder="비밀번호를 입력해주세요"
+              <JoinInput>
+                value={email}
+                onChange={onChangeEmail}
                 value={password}
                 onChange={onChangePassword}
-              ></input>
-
-              <Label>비밀번호 확인</Label>
-              <input
-                type="password"
-                placeholder="비밀번호를 한 번 더 입력해주세요"
-                value={confirmPassword}
+                value={password}
                 onChange={onChangeConfirmPassword}
-              ></input>
-
-              <Label>닉네임</Label>
-              <input
-                type="text"
-                placeholder="닉네임을 입력해주세요"
                 value={nickname}
                 onChange={onChangeNickname}
-              ></input>
-
+              </JoinInput>
               <StyledButton
                 style={{ margin: '20px', width: '300px', height: '70px', marginBottom: '-10px' }}
                 type="button"
