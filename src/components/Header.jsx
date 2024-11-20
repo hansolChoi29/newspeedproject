@@ -67,13 +67,13 @@ const LogoutBtn = styled.button`
   display: flex;
   align-items: center;
   gap: 5px;
-  color: #333;
+  color: #fff;
   font-size: 14px;
   font-weight: 700;
-  border: 1px solid #f4a460;
+  border: none;
+  background-color: #f4a460 !important;
   border-radius: 5px;
   svg {
-    color: #f4a460;
     font-size: 20px;
   }
 `;
@@ -175,7 +175,7 @@ function Header() {
           </Link>
           <LogoutBtn type="button" onClick={signOut}>
             <AiOutlineLogout />
-            로그아웃
+            logout
           </LogoutBtn>
         </MyPageStyle>
       </HeaderInner>
