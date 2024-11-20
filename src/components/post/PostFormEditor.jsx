@@ -4,6 +4,7 @@ import { supabase } from '../../supabase/supabase';
 import { PostContext } from '../../context/PostProvider';
 import PostButton from './PostButton';
 import { toast } from 'react-toastify';
+import { useParams } from 'react-router-dom';
 
 const PostForm = styled.form`
   display: flex;
