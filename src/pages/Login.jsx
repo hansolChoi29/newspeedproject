@@ -20,25 +20,6 @@ const LoginCard = styled.div`
   }
 `;
 
-const LoginPasswoardStyle = styled.form`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  width: 450px;
-  height: 550px;
-  box-sizing: border-box;
-  padding: 30px;
-  & input {
-    width: 300px;
-    height: 70px;
-    border-color: #ecebeb;
-    box-sizing: border-box;
-    text-align: center;
-    margin-top: -20px;
-  }
-`;
-
 const P = styled.p`
   align-items: end;
   margin-left: auto;
@@ -60,6 +41,7 @@ const LoginWhaleImg = styled.img`
 `;
 
 const BackgroundColor = styled.div`
+  overflow: hidden;
   background-image: linear-gradient(to right top, #87ceeb, #96dce0, #b4e6d6, #d7eed4, #f5f5dc);
 `;
 
@@ -119,14 +101,19 @@ function Login() {
         <LoginCard style={{ height: '100vh' }}>
           <StyledSection>
             <LogoFontStyle>
-              <h1 style={{ marginTop: '30px', fontSize: '45px' }}>Voir le chemin</h1>
+              <p style={{ marginTop: '30px', fontSize: '45px' }}>Voir le chemin</p>
             </LogoFontStyle>
 
-            <Loginpassword email={email} setEmail={setEmail} password={password} setPassword={setPassword} />
+            <LoginPasswoardStyle
+              onSubmit={(e) => {
+                e.preventDefault(); // 기본 새로고침 방지
+                loginUser(); // 엔터 키와 버튼 클릭 모두 처리
+              }}
+            >
+              <Loginpassword email={email} setEmail={setEmail} password={password} setPassword={setPassword} />
 
-            <LoginPasswoardStyle>
               <P onClick={FindPasswordPage}>패스워드를 잊으셨나요?</P>
-              <Button loginUser={loginUser} handleSingup={handleSingup} loginText="로그인" signupText="회원가입" />
+              <Button handleSingup={handleSingup} />
             </LoginPasswoardStyle>
           </StyledSection>
         </LoginCard>
@@ -134,5 +121,23 @@ function Login() {
     </>
   );
 }
+const LoginPasswoardStyle = styled.form`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  width: 450px;
+  height: 550px;
+  box-sizing: border-box;
+  padding: 30px;
+  & input {
+    width: 300px;
+    height: 70px;
+    border-color: #ecebeb;
+    box-sizing: border-box;
+    text-align: center;
+    margin-top: -10px;
+  }
+`;
 
 export default Login;
