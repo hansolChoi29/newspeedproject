@@ -8,7 +8,7 @@ import { supabase } from '../supabase/supabase';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Button from '../components/login/Button';
-import Loginpassword from '../components/login/input';
+import Loginpassword from '../components/login/Input';
 
 const LoginCard = styled.div`
   display: flex;
