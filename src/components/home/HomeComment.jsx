@@ -6,7 +6,7 @@ import { FaPen, FaRegTrashAlt } from 'react-icons/fa';
 import { RiEditLine, RiCloseLargeFill } from 'react-icons/ri';
 import HomeUserProfile from './HomeUserProfile';
 
-const CommentWrapper = styled.div`
+const CommentWrapper = styled.form`
   position: relative;
   padding: 10px;
   border-bottom: 1px solid #ddd;
@@ -66,13 +66,12 @@ export default function HomeComment({ comment, updateComment, setComments }) {
   const [isEditing, setIsEditing] = useState(false);
   const [newCommentData, setNewCommentData] = useState(comment.comment_data);
   const [userProfile, setUserProfile] = useState({});
-
-  const fetchUserProfile = async (userId) => {
+  const fetchUserProfile = async (user_id) => {
     try {
       const { data, error } = await supabase
         .from('users')
         .select('user_nick_name, user_profile_image')
-        .eq('id', userId)
+        .eq('id', user_id)
         .single();
 
       if (error) {
@@ -101,7 +100,8 @@ export default function HomeComment({ comment, updateComment, setComments }) {
     setNewCommentData(comment.comment_data);
   };
 
-  const handleSaveEdit = () => {
+  const handleSaveEdit = (e) => {
+    e.preventDefault();
     if (newCommentData.length === 0) {
       toast.error('댓글을 입력해주세요');
       return;
@@ -135,7 +135,7 @@ export default function HomeComment({ comment, updateComment, setComments }) {
   };
 
   return (
-    <CommentWrapper>
+    <CommentWrapper onSubmit={handleSaveEdit}>
       <CommentContent>
         {isEditing ? (
           <>
@@ -161,7 +161,7 @@ export default function HomeComment({ comment, updateComment, setComments }) {
       </CommentContent>
       {isEditing ? (
         <CommentEditBtnbox>
-          <button onClick={handleSaveEdit}>
+          <button type="submit">
             <RiEditLine />
           </button>
           <button onClick={handleCancelEdit}>

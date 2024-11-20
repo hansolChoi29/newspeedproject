@@ -110,7 +110,7 @@ export default function HomeListItem({ post }) {
     if (currentUserLike) {
       setToggleLike(true);
     }
-  }, [likes, user_id, id]);
+  }, [likes, user_id, id, comments]);
 
   const handleClickToggleComment = () => {
     setPostId(id);
