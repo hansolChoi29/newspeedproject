@@ -7,6 +7,7 @@ import { AiOutlineLike, AiFillLike } from 'react-icons/ai';
 import HomeUserProfile from './HomeUserProfile';
 import { HomeContext } from '../../context/HomeProvider';
 import { IoMdMore } from 'react-icons/io';
+import Swal from 'sweetalert2';
 
 const StyledHomeListItem = styled.div`
   margin-bottom: 50px;
@@ -168,7 +169,18 @@ export default function HomeListItem({ post, user }) {
   };
 
   const handleClickDelete = () => {
-    deletePost(id);
+    Swal.fire({
+      icon: 'warning',
+      text: '정말로 게시글을 삭제하시겠습니까? ',
+      showCancelButton: true,
+      confirmButtonText: '확인',
+      cancelButtonText: '취소'
+    }).then(async (result) => {
+      if (result.value) {
+        deletePost(id);
+      } else {
+      }
+    });
   };
 
   return (
