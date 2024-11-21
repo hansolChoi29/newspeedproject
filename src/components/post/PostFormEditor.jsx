@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { supabase } from '../../supabase/supabase';
 import { PostContext } from '../../context/PostProvider';
 import PostButton from './PostButton';
+import { toast } from 'react-toastify';
 import { useParams } from 'react-router-dom';
 
 const PostForm = styled.form`
@@ -160,7 +161,7 @@ function PostFormEditor() {
 
     // 게시물 내용이나 이미지가 있는지 확인
     if (!contents.trim() && postImages.length === 0) {
-      alert('내용을 입력하거나 이미지를 선택해주세요.');
+      toast.info('내용을 입력하거나 이미지를 선택해주세요.');
       return;
     }
 
@@ -175,8 +176,6 @@ function PostFormEditor() {
         user_id: user.id
       };
 
-      console.log('postData', postData);
-
       let result;
 
       if (isEditMode) {
@@ -188,14 +187,22 @@ function PostFormEditor() {
       const { data, error } = result;
       if (error) throw error;
 
-      alert('게시물이 성공적으로 업로드되었습니다.');
+      toast.success('게시물이 성공적으로 업로드되었습니다.', {
+        position: 'top-right'
+        // autoClose: 5000
+      });
+      // toast.success('게시물이 성공적으로 업로드되었습니다.');
       setContents('');
       setPostImages([]);
       setPreviewUrls([]);
-      navigate('/home'); // 게시물 업로드 성공 시 홈 페이지로 이동
+
+      // 어쩔수 없었다!
+      setTimeout(() => {
+        navigate('/home');
+      }, 1000);
     } catch (error) {
       console.error('게시물 업로드 오류 : ', error);
-      alert(`게시물 업로드를 실패했습니다: ${error.message}`);
+      toast.error(`게시물 업로드를 실패했습니다: ${error.message}`);
     }
   };
 
@@ -216,7 +223,7 @@ function PostFormEditor() {
   const onImageChange = (e) => {
     const files = Array.from(e.target.files);
     if (files.length + previewUrls.length > 3) {
-      alert('최대 3개의 이미지만 선택할 수 있습니다.');
+      toast.info('최대 3개의 이미지만 선택할 수 있습니다.');
       return;
     }
 

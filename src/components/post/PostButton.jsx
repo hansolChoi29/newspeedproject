@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import StyledButton from '../../styles/StyledButton';
 import { useContext } from 'react';
 import { PostContext } from '../../context/PostProvider';
+import Swal from 'sweetalert2';
 
 const ButtonGroup = styled.div`
   display: flex;
@@ -11,14 +12,28 @@ const ButtonGroup = styled.div`
 `;
 
 function PostButton() {
-  const { isEditMode, setContents, setPostImages, setPreviewUrls, navigate } = useContext(PostContext);
+  const { setContents, setPostImages, setPreviewUrls, navigate, isEditMode } = useContext(PostContext);
 
   // Cancel 버튼
   const onCancel = () => {
-    setContents('');
-    setPostImages([]);
-    setPreviewUrls([]);
-    navigate('/home'); // 홈 페이지로 이동
+    Swal.fire({
+      icon: 'warning',
+      text: '취소할 경우 작성중인 내용은 저장 되지 않습니다. 정말로 취소 하시겠습니까? ',
+      showCancelButton: true,
+      confirmButtonText: '확인',
+      cancelButtonText: '취소'
+    }).then((result) => {
+      if (result.value) {
+        setContents('');
+        setPostImages([]);
+        setPreviewUrls([]);
+        setTimeout(() => {
+          navigate('/home'); // 홈 페이지로 이동
+        }, 1000);
+      } else {
+        //취소
+      }
+    });
   };
 
   return (
