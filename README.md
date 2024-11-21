@@ -36,6 +36,79 @@
 
 
 ## 기능구현
+- Login
+  - 로그인 컴포넌트</br>
+로그인 컴포넌트는 사용자가 이메일과 비밀번호를 입력하여 인증할 수 있는 React 기반 UI 컴포넌트입니다. Supabase를 활용한 인증, 반응형 디자인, 에러 알림 기능을 제공합니다.
+1. **사용자 인증**:
+   - `supabase.auth.signInWithPassword`를 통해 이메일/비밀번호 인증을 처리합니다.
+   - 인증 실패 시 사용자에게 에러 메시지를 제공합니다.
+2. **에러 알림**:
+   - `react-toastify`를 활용하여 간단하고 직관적인 알림 메시지를 표시합니다.
+3. **페이지 이동**:
+   - 로그인 성공 시 `Home` 페이지로 리디렉션됩니다.
+   - 회원가입(`Join`) 및 비밀번호 찾기(`FindPassword`) 페이지로 이동할 수 있습니다.
+4. **반응형 UI**:
+   - `styled-components`를 사용하여 직관적이고 모던한 UI를 구현했습니다.</br>
+- **입력 필드**:
+  사용자 입력은 커스텀 컴포넌트인 `Loginpassword`를 통해 관리됩니다.
+  ```jsx
+  <Loginpassword
+    email={email}
+    setEmail={setEmail}
+    password={password}
+    setPassword={setPassword}
+  />
+
+- 비밀번호 찾기 컴포넌트 </br>
+**비밀번호 찾기(Find Password)** 컴포넌트는 사용자가 비밀번호 재설정 링크를 이메일로 받을 수 있도록 설계되었습니다. Supabase를 이용해 비밀번호 재설정을 요청하며, 입력한 이메일로 재설정 링크를 전송합니다.
+1. **이메일 입력**:
+   - 사용자가 이메일을 입력할 수 있는 필드를 제공합니다.
+2. **비밀번호 재설정 요청**:
+   - `supabase.auth.resetPasswordForEmail`을 호출하여 입력된 이메일로 재설정 링크를 전송합니다.
+   - 성공/실패 여부에 따라 사용자에게 알림 메시지를 표시합니다.
+3. **페이지 이동**:
+   - 비밀번호 재설정 링크 전송 후, 로그인 페이지로 돌아갈 수 있습니다.
+
+- **비밀번호 재설정 요청**: 
+  `supabase.auth.resetPasswordForEmail`을 호출하여 이메일로 재설정 링크를 전송합니다.
+  ```js
+  const linkPasswordReset = async () => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: 'http://localhost:5173/ResetPassword'
+    });
+    if (error) {
+      toast.error(`오류가 발생했습니다: ${error.message}`);
+    } else {
+      toast.success('패스워드 재설정 링크가 이메일로 전송되었습니다.');
+    }
+  }; 
+- 패스워드 재설정 컴포넌트 </br>
+패스워드 재설정(Reset Password) 컴포넌트는 사용자가 패스워드를 잊었을 때 새로운 패스워드를 설정할 수 있도록 도와주는 기능을 제공합니다. `supabase` 인증 시스템과 연동되어 사용자를 검증한 뒤 패스워드를 변경할 수 있습니다.
+
+1. **세션 복구**:
+   - URL의 `access_token`을 이용해 사용자 세션을 복구합니다.
+   - 세션 복구 실패 시 로그인 페이지로 리디렉션합니다.
+2. **패스워드 유효성 검사**:
+   - 최소 10자 이상, 두 개 이상의 특수문자를 포함해야 합니다.
+   - 새 패스워드와 확인용 패스워드가 일치해야 합니다.
+3. **패스워드 변경**:
+   - 입력된 패스워드를 `supabase.auth.updateUser`를 통해 변경합니다.
+   - 성공/실패 여부에 따라 알림 메시지를 표시합니다.
+4. **페이지 이동**:
+   - 성공적으로 변경되면 로그인 페이지로 이동합니다.
+
+- **세션 복구**:
+  URL에서 `access_token`을 가져와 세션을 복구합니다.
+  ```js
+  const { error } = await supabase.auth.setSession({
+    access_token: accessToken,
+    refresh_token: accessToken,
+  });
+  if (error) {
+    toast.error('세션 복구 실패. 다시 로그인해주세요.');
+    navigate('/');
+    return;
+  }
 
 - mypage
 1) 닉네임 수정기능: 수퍼베이스에 있는 user_nick_name컬럼을 가져와서 수정버튼을 누르면 실시간으로 반영되지 않게 만들었으며 수정즉시 수퍼베이스 user_nick_name컬럼에 반영됩니다.
