@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { HomeContext } from '../../context/HomeProvider';
 import HomeListItem from './HomeListItem';
 import HomeCommentList from './HomeCommentList';
-import Search from './Search';
+import HomeSearch from './HomeSearch';
 import styled from 'styled-components';
 import pencilIcon from '../../assets/write-icon.svg';
 import { Link } from 'react-router-dom';
@@ -51,6 +51,7 @@ export default function HomeList() {
 
   return (
     <StyledHomeList>
+      <HomeSearch />
       {data.length === 0 ? (
         <p>🌴글이 없습니다</p>
       ) : (

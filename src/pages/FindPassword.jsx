@@ -49,7 +49,7 @@ export const FindPassword = () => {
     try {
       // Supabase 비밀번호 재설정 요청
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: 'http://localhost:5173/ResetPassword' // 재설정 후 이동할 URL
+        redirectTo: 'https://newspeedproject.vercel.app/ResetPassword' // 재설정 후 이동할 URL
       });
 
       if (error) {

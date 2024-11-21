@@ -113,15 +113,12 @@ export default function HomeListItem({ post, user }) {
     setCommentCount(filtedComment.length);
   }, [commentsData]);
 
-  // 좋아요 상태 확인
   useEffect(() => {
-    // id === 현재 하나의 포스트 id
-    //
     const currentUserLike = likes.find((like) => like.user_id === user.id && like.post_id === id);
     if (currentUserLike) {
-      setToggleLike(true); // 이미 좋아요를 눌렀다면 true
+      setToggleLike(true); 
     } else {
-      setToggleLike(false); // 아니면 false
+      setToggleLike(false); 
     }
   }, [likes, user, id]);
 
@@ -132,29 +129,23 @@ export default function HomeListItem({ post, user }) {
   };
 
   const handleLikeClick = async () => {
-    // const currentLike = likes.find((like) => like.user_id === user.id && like.post_id === id);
     if (toggleLike) {
-      //
-      // 좋아요 취소
       const { error } = await supabase.from('likes').delete().eq('user_id', user.id).eq('post_id', id);
 
       if (error) {
         console.error(error);
       } else {
-        // 상태 업데이트
         setLikesCount(likesCount - 1);
-        setToggleLike(false); // 좋아요 취소했으므로 false
+        setToggleLike(false);
       }
     } else {
-      // 좋아요 추가
       const { error } = await supabase.from('likes').insert({ user_id: user.id, post_id: id });
 
       if (error) {
         console.error(error);
       } else {
-        // 상태 업데이트
         setLikesCount(likesCount + 1);
-        setToggleLike(true); // 좋아요를 추가했으므로 true
+        setToggleLike(true); 
       }
     }
   };
