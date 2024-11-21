@@ -50,7 +50,6 @@ function Join() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [nickname, setNickname] = useState('');
-  const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
   const onChangeEmail = (e) => {
@@ -180,7 +179,6 @@ function Join() {
         return;
       }
 
-      setUser(data.user);
       navigate('/Home');
     } catch (err) {
       console.error('Unexpected Error:', err.message);
@@ -214,10 +212,7 @@ function Join() {
                   handleSignUp(e);
                 }}
               >
-                <StyledButton
-                  style={{ margin: '20px', width: '300px', height: '70px', marginBottom: '-10px' }}
-                  type="submit"
-                >
+                <StyledButton style={{ margin: '20px', width: '300px', height: '70px' }} type="submit">
                   회원가입
                 </StyledButton>
               </form>

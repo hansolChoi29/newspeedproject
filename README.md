@@ -1,24 +1,8 @@
-## PROJECT: Voir le chemin (길을 보다)
-추천하고싶은 여행지나 가보고 싶은 여행지를 마음껏 말해보는 브라우저입니다. 다른 사용자들이 이동한 코스나 맛집에 대한 정보를 구경할 수 있고 본인이 마음에 든 여행지에 대해 북마크를 설정해두고 필요할 때 찾아볼 수 있습니다
-![title](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbQrFbQ%2FbtsKO8tfRoT%2FN1ZVKR8pbnGDZbgrIdjY3k%2Fimg.png)   
-## 팀원소개 (한솔과 다섯 똘마니 5조)
-|팀장|부팀장|팀원|팀원|팀원|팀원|
-|:---:|:---:|:---:|:---:|:---:|:---:|
-|최한솔|김민지|김민정|박우석|강대은|김지은|
-|Mypage|Home|Join|Login|Header,Footer|CreatePost|
+# React + Vite
 
-## 📖 목차
-1. [PROJECT 목표](#PROJECT-목표)
-2. [PROJECT 구조](#PROJECT-구조)
-3. [기능구현](#기능구현)
-4. [개발기간](#개발기간)
-5. [기술스택](#기술스택)
-6. [와이어프레임](#와이어프레임)
-7. [ERD](#ERD)
-8. [Trouble Shooting](#trouble-shooting)
-    
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-
+Currently, two official plugins are available:
 
 
 ## PROJECT 목표
@@ -190,3 +174,7 @@
 
 
 ## Trouble Shooting
+
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+

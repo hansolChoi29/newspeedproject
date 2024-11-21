@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { HomeContext } from '../../context/HomeProvider';
 import HomeListItem from './HomeListItem';
 import HomeCommentList from './HomeCommentList';
@@ -6,6 +6,7 @@ import Search from './Search';
 import styled from 'styled-components';
 import pencilIcon from '../../assets/write-icon.svg';
 import { Link } from 'react-router-dom';
+import { supabase } from '../../supabase/supabase';
 
 const StyledHomeList = styled.div``;
 const LinkToPost = styled(Link)`
@@ -21,6 +22,7 @@ const LinkToPost = styled(Link)`
   z-index: 1;
   border: 1px solid #32cd32;
   border-radius: 50%;
+  background: #fff;
   img {
     width: 50%;
   }
@@ -31,17 +33,34 @@ const LinkToPost = styled(Link)`
   }
 `;
 
-
 export default function HomeList() {
-  const { chatToggle, data, postId, setData } = useContext(HomeContext);
+  const { chatToggle, data, postId } = useContext(HomeContext);
+  const [user, setUser] = useState();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data: user, error } = await supabase.auth.getUser();
+      if (error) {
+        console.error('User fetch error:', error);
+      }
+      setUser(user.user);
+    };
+
+    fetchUser();
+  }, []);
 
   return (
     <StyledHomeList>
-      {data.length === 0 ? <p>🌴글이 없습니다</p> : data.map((post) => <HomeListItem key={post.id} post={post} />)}
+      {data.length === 0 ? (
+        <p>🌴글이 없습니다</p>
+      ) : (
+        data
+          .sort((a, b) => new Date(b.post_created_at) - new Date(a.post_created_at))
+          .map((post) => <HomeListItem key={post.id} post={post} user={user} />)
+      )}
       {chatToggle && <HomeCommentList postId={postId} />}
-      <p>{Search}</p>
       <LinkToPost to="/post">
-        <img src={pencilIcon} alt="" />
+        <img src={pencilIcon} alt="pencilIcon" />
         <span>작성하기</span>
       </LinkToPost>
     </StyledHomeList>
